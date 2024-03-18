@@ -1,0 +1,10 @@
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"                                       # i.e. available in your Worker on env.SITE_DB
+database_name = "db"
+database_id = "40814d14-5572-4f9e-95cb-e553a9ccabc8"
+
+# [[r2_buckets]]
+# binding = "SITE_BUCKET"
+# bucket_name = "bookinist-01"
