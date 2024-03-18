@@ -7,6 +7,8 @@ import { generateId } from 'lucia'
 import { initGoogleAuth, initLucia, User } from '@/auth'
 import { getContext } from '@/lib/utils'
 
+export const runtime = 'edge'
+
 const PROFILE_URL = 'https://www.googleapis.com/oauth2/v3/userinfo'
 
 export const GET = async (request: Request) => {

@@ -1,5 +1,7 @@
 import Link from 'next/link'
 
+export const runtime = 'edge'
+
 const Page = () => {
   return (
     <div className='w-80 max-w-full mx-auto text-gray-500 flex flex-col text-center'>

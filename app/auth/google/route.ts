@@ -5,6 +5,8 @@ import { generateCodeVerifier, generateState } from 'arctic'
 
 import { initGoogleAuth } from '@/auth'
 
+export const runtime = 'edge'
+
 export const GET = async () => {
   const state = generateState()
   const codeVerifier = generateCodeVerifier()

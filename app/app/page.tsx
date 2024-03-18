@@ -5,6 +5,8 @@ import { getContext } from '@/lib/utils'
 
 import { logout } from './actions'
 
+export const runtime = 'edge'
+
 const Page = async () => {
   const env = getContext()
   const { user } = await validateRequest(env.db)
