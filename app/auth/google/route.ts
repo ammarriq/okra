@@ -14,12 +14,7 @@ export const GET = async () => {
   const googleURL = await initGoogleAuth().createAuthorizationURL(
     state,
     codeVerifier,
-    {
-      scopes: [
-        'https://www.googleapis.com/auth/userinfo.email',
-        'https://www.googleapis.com/auth/userinfo.profile',
-      ],
-    }
+    { scopes: ['email', 'profile'] }
   )
 
   cookies().set('google_state', state, {
