@@ -16,15 +16,17 @@ const Page = async () => {
   }
 
   return (
-    <div className='w-80 max-w-full mx-auto text-gray-500 flex flex-col text-center'>
-      <p className='text-xl font-semibold pb-4'>Welcome to Cebr</p>
-      <div className='w-full flex gap-3 items-center px-3 py-2.5 bg-gray-50 rounded-md'>
-        <i className='icon-[logos--google-icon]'></i>
-        <Link href='/auth/google' className='font-medium'>
-          Log in with Google
-        </Link>
-      </div>
-    </div>
+    <main className='flex items-center flex-col gap-3.5 py-20 min-h-screen'>
+      <p className='text-4xl font-bold pb-4'>Log in</p>
+      <Link
+        href='/auth/google'
+        className='flex items-center justify-center gap-2 py-2 text-sm
+        font-medium border rounded w-full max-w-60 hover:bg-gray-100'
+      >
+        <i className='icon-[logos--google-icon]' />
+        Continue with Google
+      </Link>
+    </main>
   )
 }
 
