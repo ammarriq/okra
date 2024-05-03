@@ -23,7 +23,7 @@ const Page = async () => {
         className='flex items-center justify-center gap-2 py-2 text-sm
         font-medium border rounded w-full max-w-60 hover:bg-gray-100'
       >
-        <i className='icon-[logos--google-icon]' />
+        {/* <i className='icon-[logos--google-icon]' /> */}
         Continue with Google
       </Link>
     </main>

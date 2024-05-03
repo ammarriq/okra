@@ -1,7 +1,5 @@
 import type { Config } from 'tailwindcss'
 
-import { addDynamicIconSelectors } from '@iconify/tailwind'
-
 const config: Config = {
   content: [
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -9,8 +7,13 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: 'hsl(var(--primary))',
+        background: 'hsl(var(--background))',
+      },
+    },
   },
-  plugins: [addDynamicIconSelectors()],
+  plugins: [],
 }
 export default config
