@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 
 import { validateRequest } from '@/auth'
+import { GoogleIcon } from '@/lib/icons'
 
 export const runtime = 'edge'
 
@@ -23,7 +24,7 @@ const Page = async () => {
         className='flex items-center justify-center gap-2 py-2 text-sm
         font-medium border rounded w-full max-w-60 hover:bg-gray-100'
       >
-        {/* <i className='icon-[logos--google-icon]' /> */}
+        <GoogleIcon />
         Continue with Google
       </Link>
     </main>
