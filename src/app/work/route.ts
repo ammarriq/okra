@@ -29,7 +29,7 @@ export const GET = async () => {
     .first<Workspace>()
 
   if (!workspace) {
-    return redirect('/work/workspace')
+    return redirect('/work/add')
   }
 
   return redirect(`/work/${workspace.id}/home`)
