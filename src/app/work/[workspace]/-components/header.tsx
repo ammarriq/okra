@@ -1,26 +1,21 @@
-import { redirect } from 'next/navigation'
-
-import { getRequestContext } from '@cloudflare/next-on-pages'
+import { User } from 'lucia'
 
 import { CommandIcon, SearchIcon } from '@/lib/icons'
-import { validateRequest } from '@/auth'
 
 import Sidebar from './sidebar'
 import SidebarToggle from './sidebar-toggle'
 import UserProfile from './user-profile'
 
-const Header = async () => {
-  const { env } = getRequestContext()
-  const { user } = await validateRequest(env.db)
+type Props = {
+  user: User
+  workspaceId: string
+}
 
-  if (!user) {
-    return redirect('/auth')
-  }
-
+const Header = async ({ user, workspaceId }: Props) => {
   return (
     <header className="sticky top-0 flex bg-white px-4 py-3 lg:items-center">
       <SidebarToggle>
-        <Sidebar dialog />
+        <Sidebar dialog user={user} workspaceId={workspaceId} />
       </SidebarToggle>
 
       <form method="get" className="relative w-full max-w-[14rem] md:max-w-xs">

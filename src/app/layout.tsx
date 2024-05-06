@@ -1,7 +1,10 @@
-import type { Metadata } from 'next'
 import './globals.css'
 
+import type { Metadata } from 'next'
+
 import { Inter } from 'next/font/google'
+
+import { ClientProviders } from './providers'
 
 export const runtime = 'edge'
 
@@ -14,8 +17,10 @@ export const metadata: Metadata = {
 
 const Layout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
-    <html lang='en'>
-      <body className={inter.className}>{children}</body>
+    <html lang="en">
+      <body className={inter.className}>
+        <ClientProviders>{children}</ClientProviders>
+      </body>
     </html>
   )
 }

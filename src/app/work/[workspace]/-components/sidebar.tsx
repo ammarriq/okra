@@ -1,3 +1,9 @@
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+
+import { getRequestContext } from '@cloudflare/next-on-pages'
+import { User } from 'lucia'
+
 import {
   BarChartIcon,
   ChatBubbleIcon,
@@ -6,9 +12,11 @@ import {
   HomeIcon,
   UsersGroupIcon,
 } from '@/lib/icons'
+import { Workspace } from '@/lib/schemas/workspace'
 import { cn } from '@/lib/utils/cn'
 
-import { Workspaces } from './Workspaces'
+import SidebarLink from './sidebar-link'
+import { Workspaces } from './workspaces'
 
 const menu = [
   {
@@ -52,9 +60,25 @@ const projects = [
 
 type Props = {
   dialog?: boolean
+  user: User
+  workspaceId: string
 }
 
-const Sidebar = ({ dialog }: Props) => {
+const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
+  const { env } = getRequestContext()
+
+  const workspaces = await env.db
+    .prepare('SELECT * FROM workspaces WHERE created_by=?')
+    .bind(user.id)
+    .all<Workspace>()
+    .then((o) => o.results)
+
+  const currentWorkspace = workspaces.find((o) => o.id === workspaceId)
+
+  if (!currentWorkspace) {
+    return notFound()
+  }
+
   return (
     <aside
       className={cn(
@@ -67,23 +91,22 @@ const Sidebar = ({ dialog }: Props) => {
         <div className="{props.class} font-bold">okra</div>
       </a>
 
-      <Workspaces />
+      <Workspaces currentWorkspace={currentWorkspace} workspaces={workspaces} />
 
       <nav className="flex h-full flex-col gap-1">
         {menu.map(({ title, url, icon: Icon }) => (
-          <a
+          <SidebarLink
             key={url}
-            href={`/app/${'someId'}/${url}`}
-            className={cn(
-              'flex w-full items-center justify-start gap-2.5 rounded-lg p-1.5 lg:px-2.5 lg:py-2',
-              true ? 'border border-transparent text-foreground/50' : '',
-            )}
+            href={`/work/${workspaceId}/${url}`}
+            className="flex w-full items-center justify-start gap-2.5 rounded-lg border border-transparent p-1.5 text-foreground/50 lg:px-2.5 lg:py-2"
+            activeClass="border-border bg-white text-foreground"
+            includes={url}
           >
             <Icon className="size-5" />
             <span className="text-sm font-medium capitalize">
               {title.replaceAll('-', ' ')}
             </span>
-          </a>
+          </SidebarLink>
         ))}
       </nav>
 
@@ -109,12 +132,12 @@ const Sidebar = ({ dialog }: Props) => {
           >
             <FolderIcon className="size-5" />
 
-            <a
+            <Link
               href="#"
               className="w-0 grow truncate whitespace-nowrap text-sm font-medium after:absolute after:inset-0"
             >
               {project.name || 'Untitled'}
-            </a>
+            </Link>
           </div>
         ))}
       </nav>

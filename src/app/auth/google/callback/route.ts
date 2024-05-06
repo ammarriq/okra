@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { generateId } from 'lucia'
 
-import { initGoogleAuth, initLucia, User } from '@/auth'
+import { initGoogleAuth, initLucia, User } from '@/lib/auth'
 
 export const runtime = 'edge'
 
@@ -29,7 +29,7 @@ export const GET = async (request: Request) => {
   // try {
   const token = await initGoogleAuth().validateAuthorizationCode(
     code,
-    codeVerifier
+    codeVerifier,
   )
   const res = await fetch(`${PROFILE_URL}?access_token=${token.accessToken}`)
   const googleUser = (await res.json()) as GoogleUser
@@ -56,7 +56,7 @@ export const GET = async (request: Request) => {
       .prepare(
         `INSERT INTO users
 				(id, name, picture, email, provider, provider_id, created_at)
-				VALUES (?, ?, ?, ?, ?, ?, ?)`
+				VALUES (?, ?, ?, ?, ?, ?, ?)`,
       )
       .bind(...Object.values(newUser))
       .run()
@@ -70,7 +70,10 @@ export const GET = async (request: Request) => {
     ...cookie.attributes,
   })
 
-  return redirect('/app')
+  const redirectTo = cookies().get('redirectTo')?.value
+  const userRedirect = user ? '/work' : '/work/add'
+
+  return redirect(redirectTo || userRedirect)
   // } catch (e) {
   // 	if (
   // 		e instanceof OAuth2RequestError &&

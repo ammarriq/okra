@@ -11,6 +11,8 @@ import {
 import { LogoutIcon } from '@/lib/icons'
 import Avatar from '@/components/avatar'
 
+import { logout } from '../actions'
+
 type Props = {
   name: string
   picture: string
@@ -32,8 +34,8 @@ const UserProfile = ({ name, picture }: Props) => {
       >
         <Menu className="outline-none">
           <MenuItem
-            href={`/app/${'id'}/home`}
             className="flex w-full cursor-pointer items-center rounded-md px-2 py-1 text-sm outline-none data-[focused]:bg-background"
+            onAction={logout}
           >
             <LogoutIcon className="mr-2 size-4" />
             Logout

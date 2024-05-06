@@ -1,4 +1,5 @@
 export * from './bar-chart'
+export * from './caret-up-down'
 export * from './chat-bubble'
 export * from './checklist'
 export * from './chevron-down'

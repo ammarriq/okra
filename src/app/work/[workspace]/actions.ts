@@ -1,13 +1,13 @@
+'use server'
+
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import { getRequestContext } from '@cloudflare/next-on-pages'
 
-import { initLucia, validateRequest } from '@/auth'
+import { initLucia, validateRequest } from '@/lib/auth'
 
 export const logout = async (): Promise<ActionResult> => {
-  'use server'
-
   const { env } = getRequestContext()
   const lucia = initLucia(env.db)
 

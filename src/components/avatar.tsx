@@ -25,7 +25,7 @@ const Avatar = (props: Props) => {
   return (
     <div className={cn('relative overflow-hidden', className)}>
       {isMounted ? (
-        <ImageCmp src={src ?? ''} objectFit="cover" fill alt="" />
+        <ImageCmp src={src ?? ''} className="object-cover" fill alt="" />
       ) : (
         <div className="grid size-full place-items-center bg-transparent">
           {fallback}

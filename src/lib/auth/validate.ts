@@ -1,4 +1,8 @@
+import 'server-only'
+
 import { cookies } from 'next/headers'
+import { headers } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { cache } from 'react'
 
 import { Session, User } from 'lucia'
@@ -6,7 +10,7 @@ import { Session, User } from 'lucia'
 import { initLucia } from './lucia'
 
 type ValidateRequest = (
-  db: D1Database
+  db: D1Database,
 ) => Promise<{ user: User; session: Session } | { user: null; session: null }>
 
 export const validateRequest = cache(async (db) => {
@@ -33,3 +37,10 @@ export const validateRequest = cache(async (db) => {
 
   return result
 }) satisfies ValidateRequest
+
+export const redirectToLogin = () => {
+  const pathname = headers().get('next-path')
+  const url = pathname ? `/auth?redirectTo=${pathname}` : '/auth'
+
+  return redirect(url)
+}
