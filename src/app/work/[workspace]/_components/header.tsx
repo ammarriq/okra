@@ -1,10 +1,14 @@
+import { notFound } from 'next/navigation'
+
 import { User } from 'lucia'
 
 import { CommandIcon, SearchIcon } from '@/lib/icons'
+import { Workspace } from '@/lib/schemas/workspace'
+import { getEnv } from '@/lib/server/cf'
 
+import ProfileDropdown from './profile-dropdown'
 import Sidebar from './sidebar'
 import SidebarToggle from './sidebar-toggle'
-import UserProfile from './user-profile'
 
 type Props = {
   user: User
@@ -12,6 +16,20 @@ type Props = {
 }
 
 const Header = async ({ user, workspaceId }: Props) => {
+  const env = getEnv()
+
+  const workspaces = await env.db
+    .prepare('SELECT * FROM workspaces WHERE created_by=?')
+    .bind(user.id)
+    .all<Workspace>()
+    .then((o) => o.results)
+
+  const currentWorkspace = workspaces.find((o) => o.id === workspaceId)
+
+  if (!currentWorkspace) {
+    return notFound()
+  }
+
   return (
     <header className="sticky top-0 flex bg-white px-4 py-3 lg:items-center">
       <SidebarToggle>
@@ -40,7 +58,11 @@ const Header = async ({ user, workspaceId }: Props) => {
         </div>
       </form>
 
-      <UserProfile name={user.name} picture={user.picture} />
+      <ProfileDropdown
+        user={user}
+        currentWorkspace={currentWorkspace}
+        workspaces={workspaces}
+      />
     </header>
   )
 }

@@ -1,5 +1,6 @@
 'use server'
 
+import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
@@ -35,7 +36,9 @@ export const createProject = async (_: any, formData: FormData) => {
     .bind(projectId, output.workspace_id, user.id, Date.now())
     .run()
 
-  return redirect(`/work/${output.workspace_id}/${projectId}`)
+  revalidatePath(`/work/${output.workspace_id}`)
+
+  // return redirect(`/work/${output.workspace_id}/${projectId}`)
 }
 
 export const logout = async (): Promise<ActionResult> => {

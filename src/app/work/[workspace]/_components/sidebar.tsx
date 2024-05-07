@@ -1,7 +1,5 @@
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 
-import { getRequestContext } from '@cloudflare/next-on-pages'
 import { User } from 'lucia'
 
 import {
@@ -10,18 +8,14 @@ import {
   ChecklistIcon,
   FolderIcon,
   HomeIcon,
-  PlusIcon,
   UsersGroupIcon,
 } from '@/lib/icons'
-import { Workspace } from '@/lib/schemas/workspace'
+import { Project } from '@/lib/schemas/project'
 import { getEnv } from '@/lib/server/cf'
 import { cn } from '@/lib/utils/cn'
 
-import { createProject } from '../actions'
-
 import CreateProjectForm from './project-form'
 import SidebarLink from './sidebar-link'
-import { Workspaces } from './workspaces'
 
 const menu = [
   {
@@ -51,18 +45,6 @@ const menu = [
   },
 ]
 
-const projects = [
-  {
-    created_at: 1714529628453,
-    created_by: 'sgzwgyl0dh8wrr8',
-    icon: null,
-    id: 'vabbxbkue11wh4q',
-    name: 'Cebr',
-    updated_at: 1714529725082,
-    workspace_id: '5i1scnedg4nbdy6',
-  },
-]
-
 type Props = {
   dialog?: boolean
   user: User
@@ -72,17 +54,11 @@ type Props = {
 const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
   const env = getEnv()
 
-  const workspaces = await env.db
-    .prepare('SELECT * FROM workspaces WHERE created_by=?')
-    .bind(user.id)
-    .all<Workspace>()
+  const projects = await env.db
+    .prepare('SELECT * FROM projects WHERE workspace_id=? AND created_by=?')
+    .bind(workspaceId, user.id)
+    .all<Project>()
     .then((o) => o.results)
-
-  const currentWorkspace = workspaces.find((o) => o.id === workspaceId)
-
-  if (!currentWorkspace) {
-    return notFound()
-  }
 
   return (
     <aside
@@ -96,7 +72,7 @@ const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
         <div className="{props.class} font-bold">okra</div>
       </a>
 
-      <Workspaces currentWorkspace={currentWorkspace} workspaces={workspaces} />
+      {/* <Workspaces currentWorkspace={currentWorkspace} workspaces={workspaces} /> */}
 
       <nav className="flex h-full flex-col gap-1">
         {menu.map(({ title, url, icon: Icon }) => (
