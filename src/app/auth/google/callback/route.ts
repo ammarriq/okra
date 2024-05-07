@@ -1,10 +1,10 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { getRequestContext } from '@cloudflare/next-on-pages'
 import { generateId } from 'lucia'
 
 import { initGoogleAuth, initLucia, User } from '@/lib/auth'
+import { getEnv } from '@/lib/server/cf'
 
 export const runtime = 'edge'
 
@@ -13,7 +13,7 @@ const PROFILE_URL = 'https://www.googleapis.com/oauth2/v3/userinfo'
 export const GET = async (request: Request) => {
   const url = new URL(request.url)
 
-  const { env } = getRequestContext()
+  const env = getEnv()
   const lucia = initLucia(env.db)
 
   const code = url.searchParams.get('code')

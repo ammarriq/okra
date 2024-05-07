@@ -5,6 +5,7 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { cache } from 'react'
 
+import { getRequestContext } from '@cloudflare/next-on-pages'
 import { Session, User } from 'lucia'
 
 import { initLucia } from './lucia'
@@ -43,4 +44,15 @@ export const redirectToLogin = () => {
   const url = pathname ? `/auth?redirectTo=${pathname}` : '/auth'
 
   return redirect(url)
+}
+
+export const getUser = async () => {
+  const { env } = getRequestContext()
+  const { user } = await validateRequest(env.db)
+
+  if (!user) {
+    return redirectToLogin()
+  }
+
+  return user
 }

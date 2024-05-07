@@ -1,9 +1,7 @@
-import { getRequestContext } from '@cloudflare/next-on-pages'
+import { getUser } from '@/lib/auth'
 
-import { redirectToLogin, validateRequest } from '@/lib/auth'
-
-import Header from './-components/header'
-import Sidebar from './-components/sidebar'
+import Header from './_components/header'
+import Sidebar from './_components/sidebar'
 
 type Props = {
   params: { workspace: string }
@@ -11,12 +9,7 @@ type Props = {
 }
 
 const Layout = async ({ params, children }: Props) => {
-  const { env } = getRequestContext()
-  const { user } = await validateRequest(env.db)
-
-  if (!user) {
-    return redirectToLogin()
-  }
+  const user = await getUser()
 
   return (
     <main className="mx-auto grid h-full grid-rows-[auto_minmax(0,1fr)] lg:grid-cols-[auto_minmax(0,1fr)]">

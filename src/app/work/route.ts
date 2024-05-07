@@ -15,15 +15,14 @@ export const GET = async () => {
   }
 
   const workspaceId = cookies().get('workspaceId')
+
   if (workspaceId) {
     return redirect(`/work/${workspaceId}/home`)
   }
 
   const workspace = await env.db
     .prepare(
-      `SELECT * FROM workspaces
-			WHERE created_by=?
-			ORDER BY created_at DESC`,
+      `SELECT * FROM workspaces WHERE created_by=? ORDER BY created_at DESC`,
     )
     .bind(user.id)
     .first<Workspace>()

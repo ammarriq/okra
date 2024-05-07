@@ -5,6 +5,7 @@ import { getRequestContext } from '@cloudflare/next-on-pages'
 
 import { validateRequest } from '@/lib/auth'
 import { GoogleIcon } from '@/lib/icons'
+import { getEnv } from '@/lib/server/cf'
 
 export const runtime = 'edge'
 
@@ -13,11 +14,11 @@ type Props = {
 }
 
 const Page = async ({ searchParams }: Props) => {
-  const { env } = getRequestContext()
-  const { user } = await validateRequest(env.db)
+  const { db } = getEnv()
+  const { user } = await validateRequest(db)
 
   if (user) {
-    return redirect('/app')
+    return redirect('/work')
   }
 
   return (

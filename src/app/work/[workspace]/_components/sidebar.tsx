@@ -10,11 +10,15 @@ import {
   ChecklistIcon,
   FolderIcon,
   HomeIcon,
+  PlusIcon,
   UsersGroupIcon,
 } from '@/lib/icons'
 import { Workspace } from '@/lib/schemas/workspace'
 import { cn } from '@/lib/utils/cn'
 
+import { createProject } from '../actions'
+
+import CreateProjectForm from './project-form'
 import SidebarLink from './sidebar-link'
 import { Workspaces } from './workspaces'
 
@@ -113,13 +117,9 @@ const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
       <nav className="flex h-full flex-col gap-1 pt-4">
         <hgroup className="mb-2 flex items-center px-1.5 text-foreground/50 lg:px-2.5">
           <h3 className="text-sm font-semibold">Pages</h3>
-          <form
-            className="ml-auto"
-            action="/app/{workspaceId}?/add_project"
-            method="post"
-          >
-            <button type="submit" className="icon-[ph--plus-bold]"></button>
-          </form>
+          <CreateProjectForm>
+            <input type="hidden" name="workspace_id" value={workspaceId} />
+          </CreateProjectForm>
         </hgroup>
 
         {projects.map((project) => (
