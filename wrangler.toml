@@ -1,7 +1,7 @@
 compatibility_flags = ["nodejs_compat"]
 
 [[d1_databases]]
-binding = "db"
+binding = "DB"
 database_name = "db"
 database_id = "40814d14-5572-4f9e-95cb-e553a9ccabc8"
 

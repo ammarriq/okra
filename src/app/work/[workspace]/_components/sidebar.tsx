@@ -14,6 +14,7 @@ import {
   UsersGroupIcon,
 } from '@/lib/icons'
 import { Workspace } from '@/lib/schemas/workspace'
+import { getEnv } from '@/lib/server/cf'
 import { cn } from '@/lib/utils/cn'
 
 import { createProject } from '../actions'
@@ -69,7 +70,7 @@ type Props = {
 }
 
 const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
-  const { env } = getRequestContext()
+  const env = getEnv()
 
   const workspaces = await env.db
     .prepare('SELECT * FROM workspaces WHERE created_by=?')

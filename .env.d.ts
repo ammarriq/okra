@@ -1,3 +1,3 @@
 interface CloudflareEnv {
-  db: import('@cloudflare/workers-types').D1Database
+  DB: import('@cloudflare/workers-types').D1Database
 }

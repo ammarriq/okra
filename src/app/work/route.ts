@@ -1,18 +1,13 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { getRequestContext } from '@cloudflare/next-on-pages'
-
-import { redirectToLogin, validateRequest } from '@/lib/auth'
+import { getUser } from '@/lib/auth'
 import { Workspace } from '@/lib/schemas/workspace'
+import { getEnv } from '@/lib/server/cf'
 
 export const GET = async () => {
-  const { env } = getRequestContext()
-  const { user } = await validateRequest(env.db)
-
-  if (!user) {
-    return redirectToLogin()
-  }
+  const user = await getUser()
+  const env = getEnv()
 
   const workspaceId = cookies().get('workspaceId')
 

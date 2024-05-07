@@ -2,21 +2,17 @@
 
 import { redirect } from 'next/navigation'
 
-import { getRequestContext } from '@cloudflare/next-on-pages'
 import { decode } from 'decode-formdata'
 import { flatten, pick, safeParse } from 'valibot'
 
-import { redirectToLogin, validateRequest } from '@/lib/auth'
+import { getUser } from '@/lib/auth'
 import { WorkspaceSchema } from '@/lib/schemas/workspace'
+import { getEnv } from '@/lib/server/cf'
 import { createId } from '@/lib/utils/random'
 
 export const createWorkspace = async (_: any, formData: FormData) => {
-  const { env } = getRequestContext()
-  const { user } = await validateRequest(env.db)
-
-  if (!user) {
-    return redirectToLogin()
-  }
+  const user = await getUser()
+  const env = getEnv()
 
   const data = decode(formData)
   const schema = pick(WorkspaceSchema, ['name'])

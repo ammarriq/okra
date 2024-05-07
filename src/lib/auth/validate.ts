@@ -8,6 +8,8 @@ import { cache } from 'react'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 import { Session, User } from 'lucia'
 
+import { getEnv } from '../server/cf'
+
 import { initLucia } from './lucia'
 
 type ValidateRequest = (
@@ -39,19 +41,15 @@ export const validateRequest = cache(async (db) => {
   return result
 }) satisfies ValidateRequest
 
-export const redirectToLogin = () => {
-  const pathname = headers().get('next-path')
-  const url = pathname ? `/auth?redirectTo=${pathname}` : '/auth'
-
-  return redirect(url)
-}
-
 export const getUser = async () => {
-  const { env } = getRequestContext()
+  const env = getEnv()
   const { user } = await validateRequest(env.db)
 
   if (!user) {
-    return redirectToLogin()
+    const pathname = headers().get('next-path')
+    const url = pathname ? `/auth?redirectTo=${pathname}` : '/auth'
+
+    return redirect(url)
   }
 
   return user

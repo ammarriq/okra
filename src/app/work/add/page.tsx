@@ -1,16 +1,9 @@
-import { getRequestContext } from '@cloudflare/next-on-pages'
-
-import { redirectToLogin, validateRequest } from '@/lib/auth'
+import { getUser } from '@/lib/auth'
 
 import Form from './form'
 
 const Page = async () => {
-  const { env } = getRequestContext()
-  const { user } = await validateRequest(env.db)
-
-  if (!user) {
-    return redirectToLogin()
-  }
+  const user = await getUser()
 
   return (
     <main className="grid min-h-screen w-full place-items-center bg-background">
