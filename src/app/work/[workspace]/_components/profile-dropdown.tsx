@@ -32,7 +32,7 @@ type Props = {
   currentWorkspace: Workspace
 }
 
-const UserProfile = ({ user, workspaces, currentWorkspace }: Props) => {
+const ProfileDropdown = ({ user, workspaces, currentWorkspace }: Props) => {
   return (
     <MenuTrigger>
       <Button className="ml-auto flex overflow-hidden rounded-full border border-border">
@@ -42,6 +42,7 @@ const UserProfile = ({ user, workspaces, currentWorkspace }: Props) => {
           fallback={user.name.slice(0, 1)}
         />
       </Button>
+
       <Popover
         placement="top right"
         className="mr-4 w-11/12 origin-top-left divide-x rounded-lg border border-border
@@ -54,7 +55,6 @@ const UserProfile = ({ user, workspaces, currentWorkspace }: Props) => {
               Workspaces
             </Header>
 
-            {/* <Section className="flex flex-col truncate text-sm outline-none"> */}
             {workspaces.map((o) => (
               <MenuItem
                 key={o.id}
@@ -90,7 +90,6 @@ const UserProfile = ({ user, workspaces, currentWorkspace }: Props) => {
               <PlusIcon className="size-3" />
               <span className="ml-2 text-sm font-medium">New Workspace</span>
             </MenuItem>
-            {/* </Section> */}
           </Section>
 
           <Section className="flex flex-col border-r pt-2 font-medium">
@@ -99,34 +98,6 @@ const UserProfile = ({ user, workspaces, currentWorkspace }: Props) => {
               <p className="text-xs text-foreground/50">{user.email}</p>
             </Header>
 
-            {/* <Section className="flex flex-col truncate text-sm outline-none"> */}
-            {/* {workspaces.map((o) => (
-              <MenuItem
-                key={o.id}
-                href={`/work/${o.id}/home`}
-                className="flex w-full cursor-pointer items-center px-2.5 py-2 outline-none data-[focused]:bg-background"
-              >
-                <div className="grid size-6 shrink-0 place-items-center rounded bg-orange-500 text-xs text-white">
-                  {o.name.slice(0, 1)}
-                </div>
-
-                <p className="ml-2 truncate whitespace-nowrap text-sm font-medium">
-                  {o.name}
-                </p>
-
-                <label className="group ml-auto flex rounded-full bg-white">
-                  <input
-                    type="radio"
-                    className="peer"
-                    defaultChecked={o.id === currentWorkspace.id}
-                    hidden
-                  />
-
-                  <CircleFilledIcon className="hidden size-[1.1rem] shrink-0 text-green-500 peer-checked:block" />
-                  <CircleIcon className="block size-[1.1rem] shrink-0 text-gray-300 peer-checked:hidden" />
-                </label>
-              </MenuItem>
-            ))} */}
             <MenuItem
               href="/work/add"
               className="flex w-full cursor-pointer items-center px-2.5 py-2 outline-none data-[focused]:bg-background"
@@ -135,6 +106,7 @@ const UserProfile = ({ user, workspaces, currentWorkspace }: Props) => {
               <HomeIcon className="size-4" />
               <span className="ml-2 text-sm font-medium">Home</span>
             </MenuItem>
+
             <MenuItem
               href="/work/add"
               className="flex w-full cursor-pointer items-center px-2.5 py-2 outline-none data-[focused]:bg-background"
@@ -143,6 +115,7 @@ const UserProfile = ({ user, workspaces, currentWorkspace }: Props) => {
               <ChatBubbleIcon className="size-4" />
               <span className="ml-2 text-sm font-medium">Chat</span>
             </MenuItem>
+
             <MenuItem
               href="/work/add"
               className="flex w-full cursor-pointer items-center px-2.5 py-2 outline-none data-[focused]:bg-background"
@@ -161,11 +134,10 @@ const UserProfile = ({ user, workspaces, currentWorkspace }: Props) => {
               <span className="ml-2 text-sm font-medium">Logout</span>
             </MenuItem>
           </Section>
-          {/* </Section> */}
         </Menu>
       </Popover>
     </MenuTrigger>
   )
 }
 
-export default UserProfile
+export default ProfileDropdown
