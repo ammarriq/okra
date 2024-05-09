@@ -29,8 +29,8 @@ CREATE TABLE IF NOT EXISTS workspaces (
   FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS projects;
-CREATE TABLE IF NOT EXISTS projects (
+DROP TABLE IF EXISTS folders;
+CREATE TABLE IF NOT EXISTS folders (
   id TEXT NOT NULL PRIMARY KEY,
   name TEXT,
   icon TEXT,
@@ -41,23 +41,23 @@ CREATE TABLE IF NOT EXISTS projects (
   FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS project_users;
-CREATE TABLE IF NOT EXISTS project_users (
+DROP TABLE IF EXISTS folder_users;
+CREATE TABLE IF NOT EXISTS folder_users (
   id TEXT NOT NULL PRIMARY KEY,
-  project_id TEXT,
+  folder_id TEXT,
   user_id TEXT,
   created_at INTEGER NOT NULL,
   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-  FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
+  FOREIGN KEY (folder_id) REFERENCES folders (id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS invites;
 CREATE TABLE IF NOT EXISTS invites (
   id TEXT NOT NULL PRIMARY KEY,
-  project_id TEXT NOT NULL,
+  folder_id TEXT NOT NULL,
   email TEXT NOT NULL,
   created_at INTEGER NOT NULL,
-  FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
+  FOREIGN KEY (folder_id) REFERENCES folders (id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS sections;
@@ -65,11 +65,11 @@ CREATE TABLE IF NOT EXISTS sections (
   id TEXT NOT NULL PRIMARY KEY,
   name TEXT,
   rank TEXT NOT NULL,
-  project_id TEXT NOT NULL, 
+  folder_id TEXT NOT NULL, 
   created_by TEXT NOT NULL,
   updated_at INTEGER,
   created_at INTEGER NOT NULL,
-  FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE,
+  FOREIGN KEY (folder_id) REFERENCES folders (id) ON DELETE CASCADE,
   FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE CASCADE
 );
 

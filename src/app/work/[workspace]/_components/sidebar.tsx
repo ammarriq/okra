@@ -6,16 +6,15 @@ import {
   BarChartIcon,
   ChatBubbleIcon,
   ChecklistIcon,
-  FolderIcon,
   HomeIcon,
   UsersGroupIcon,
 } from '@/lib/icons'
-import { Project } from '@/lib/schemas/project'
+import { Folder } from '@/lib/schemas/folder'
 import { getEnv } from '@/lib/server/cf'
 import { cn } from '@/lib/utils/cn'
 
-import CreateProjectForm from './project-form'
-import SidebarLink from './sidebar-link'
+import Pathname from './active-pathname'
+import Folders from './folders'
 
 const menu = [
   {
@@ -54,10 +53,14 @@ type Props = {
 const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
   const env = getEnv()
 
-  const projects = await env.db
-    .prepare('SELECT * FROM projects WHERE workspace_id=? AND created_by=?')
+  const folders = await env.db
+    .prepare(
+      `SELECT * FROM folders
+      WHERE workspace_id=? AND created_by=?
+      ORDER BY created_at DESC`,
+    )
     .bind(workspaceId, user.id)
-    .all<Project>()
+    .all<Folder>()
     .then((o) => o.results)
 
   return (
@@ -72,96 +75,31 @@ const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
         <div className="{props.class} font-bold">okra</div>
       </a>
 
-      {/* <Workspaces currentWorkspace={currentWorkspace} workspaces={workspaces} /> */}
-
-      <nav className="flex h-full flex-col gap-1">
+      <nav className="grid h-full gap-1">
         {menu.map(({ title, url, icon: Icon }) => (
-          <SidebarLink
+          <Pathname
             key={url}
-            href={`/work/${workspaceId}/${url}`}
-            className="flex w-full items-center justify-start gap-2.5 rounded-lg border border-transparent p-1.5 text-foreground/50 lg:px-2.5 lg:py-2"
+            className="relative flex w-full items-center gap-2.5 rounded-lg
+            border border-transparent p-1.5 text-foreground/50 lg:px-2.5 lg:py-2"
             activeClass="border-border bg-white text-foreground"
             includes={url}
           >
             <Icon className="size-5" />
-            <span className="text-sm font-medium capitalize">
-              {title.replaceAll('-', ' ')}
-            </span>
-          </SidebarLink>
-        ))}
-      </nav>
-
-      <nav className="flex h-full flex-col gap-1 pt-4">
-        <hgroup className="mb-2 flex items-center px-1.5 text-foreground/50 lg:px-2.5">
-          <h3 className="text-sm font-semibold">Pages</h3>
-          <CreateProjectForm>
-            <input type="hidden" name="workspace_id" value={workspaceId} />
-          </CreateProjectForm>
-        </hgroup>
-
-        {projects.map((project) => (
-          <div
-            key={project.id}
-            className={cn(
-              'group relative flex w-full items-center justify-start gap-2.5 rounded-lg p-1.5 lg:px-2.5 lg:py-2',
-              true ? 'border border-transparent text-foreground/50' : '',
-            )}
-          >
-            <FolderIcon className="size-5" />
 
             <Link
-              href="#"
-              className="w-0 grow truncate whitespace-nowrap text-sm font-medium after:absolute after:inset-0"
+              href={`/work/${workspaceId}/${url}`}
+              className="w-0 grow truncate whitespace-nowrap text-sm
+              font-medium capitalize after:absolute after:inset-0"
             >
-              {project.name || 'Untitled'}
+              {title.replaceAll('-', ' ')}
             </Link>
-          </div>
+          </Pathname>
         ))}
       </nav>
+
+      <Folders folders={folders} workspaceId={workspaceId} userId={user.id} />
     </aside>
   )
 }
 
 export default Sidebar
-
-{
-  /* <script lang="ts">
-	import type { Project } from '$lib/schemas/project'
-	import type { Workspace } from '$lib/schemas/workspace'
-
-	import { enhance } from '$app/forms'
-	import { page } from '$app/stores'
-
-	import { menu } from '$lib/utils/menu'
-	import Logo from '$components/logo.svelte'
-
-	import ProjectActions from './project-actions.svelte'
-	import Workspaces from './workspaces.svelte'
-
-	interface Props {
-		isShown: boolean
-		workspaces: Workspace[]
-		projects: Project[]
-	}
-
-	let { isShown = $bindable(), workspaces, projects }: Props = $props()
-
-	const workspaceId = $derived($page.params.workspaceId)
-</script>
-
-
-
-<style lang="postcss">
-	.inactive {
-		@apply border border-transparent text-foreground/50;
-	}
-
-	.active {
-		@apply border-border border bg-white text-foreground;
-	}
-
-	.anchor:hover {
-		@apply border-border border bg-white text-foreground;
-	}
-</style> */
-}
