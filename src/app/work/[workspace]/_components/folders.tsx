@@ -36,14 +36,8 @@ const Folders = ({ folders, workspaceId, userId }: Props) => {
 
     localStorage.setItem('folder', JSON.stringify(folder))
     setFolderList((prev) => [folder, ...prev])
-    createFolder(formData).then(() => {
-      localStorage.clear()
-      console.log('running')
-    })
 
-    console.log('navigating')
-
-    router.push(`/work/${workspaceId}/${folder.id}`)
+    createFolder(formData)
   }
 
   return (

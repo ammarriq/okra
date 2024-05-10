@@ -1,13 +1,19 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-import { getUser } from '@/lib/auth'
+import { validateRequest } from '@/lib/auth'
 import { Workspace } from '@/lib/schemas/workspace'
 import { getEnv } from '@/lib/server/cf'
 
-export const GET = async () => {
-  const user = await getUser()
+type Props = {
+  children: React.ReactNode
+}
+
+const Layout = async ({ children }: Props) => {
   const env = getEnv()
+  const { user } = await validateRequest(env.db)
+
+  if (!user) return <>{children}</>
 
   const workspaceId = cookies().get('workspaceId')
 
@@ -28,3 +34,5 @@ export const GET = async () => {
 
   return redirect(`/work/${workspace.id}/home`)
 }
+
+export default Layout

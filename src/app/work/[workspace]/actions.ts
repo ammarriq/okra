@@ -25,7 +25,7 @@ export const createFolder = async (formData: FormData) => {
 
   const { output } = result
 
-  await env.db
+  env.db
     .prepare(
       `INSERT INTO folders
       (id, workspace_id, created_by, created_at)
@@ -36,7 +36,7 @@ export const createFolder = async (formData: FormData) => {
 
   // revalidatePath(`/work/${output.workspace_id}`)
 
-  // return redirect(`/work/${output.workspace_id}/${folderId}`)
+  return redirect(`/work/${output.workspace_id}/${output.id}`)
 }
 
 export const logout = async (): Promise<ActionResult> => {

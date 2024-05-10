@@ -1,11 +1,6 @@
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
 
-import { getRequestContext } from '@cloudflare/next-on-pages'
-
-import { validateRequest } from '@/lib/auth'
 import { GoogleIcon } from '@/lib/icons'
-import { getEnv } from '@/lib/server/cf'
 
 export const runtime = 'edge'
 
@@ -14,13 +9,6 @@ type Props = {
 }
 
 const Page = async ({ searchParams }: Props) => {
-  const { db } = getEnv()
-  const { user } = await validateRequest(db)
-
-  if (user) {
-    return redirect('/work')
-  }
-
   return (
     <main className="flex min-h-screen flex-col items-center gap-3.5 py-20">
       <p className="pb-4 text-4xl font-bold">Log in</p>
