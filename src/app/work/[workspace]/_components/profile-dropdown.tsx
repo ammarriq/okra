@@ -45,7 +45,7 @@ const ProfileDropdown = ({ user, workspaces, currentWorkspace }: Props) => {
 
       <Popover
         placement="top right"
-        className="mr-4 w-11/12 origin-top-left divide-x rounded-lg border border-border
+        className="mr-4 w-11/12 origin-top-right divide-x rounded-lg border border-border
         bg-white shadow fill-mode-forwards entering:animate-in entering:fade-in entering:zoom-in-95
         exiting:animate-out exiting:fade-out exiting:zoom-out-95 sm:w-96"
       >
