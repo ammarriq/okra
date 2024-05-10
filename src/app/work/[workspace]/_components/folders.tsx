@@ -37,7 +37,7 @@ const Folders = ({ folders, workspaceId, userId }: Props) => {
     localStorage.setItem('folder', JSON.stringify(folder))
     setFolderList((prev) => [folder, ...prev])
 
-    createFolder(formData)
+    return createFolder(formData)
   }
 
   return (

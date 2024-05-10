@@ -24,7 +24,7 @@ const LocalStorage = ({ children }: Props) => {
 
   useEffect(() => {
     getData()
-  })
+  }, [])
 
   return (
     <>
