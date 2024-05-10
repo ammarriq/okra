@@ -14,9 +14,9 @@ const LocalStorage = ({ children }: Props) => {
 
   const getData = () => {
     const unParsedData = localStorage.getItem('folder')
-    if (!unParsedData) {
-      return setLoading(false)
-    }
+    setLoading(false)
+
+    if (!unParsedData) return
 
     const folder = JSON.parse(unParsedData)
     setFolder(folder)
