@@ -1,7 +1,5 @@
 import type { Folder } from '@/lib/schemas/folder'
 
-import { notFound } from 'next/navigation'
-
 import { getUser } from '@/lib/auth'
 import { getEnv } from '@/lib/server/cf'
 

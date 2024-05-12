@@ -7,6 +7,8 @@ import { GoogleIcon } from '@/lib/icons'
 import { Workspace } from '@/lib/schemas/workspace'
 import { getEnv } from '@/lib/server/cf'
 
+import { workspaceUrl } from './workspace-url'
+
 export const runtime = 'edge'
 
 type Props = {
@@ -18,26 +20,8 @@ const Page = async ({ searchParams }: Props) => {
   const { user } = await validateRequest(env.db)
 
   if (user) {
-    const workspaceId = cookies().get('workspaceId')
-
-    if (workspaceId) {
-      return redirect(`/work/${workspaceId}/home`)
-    }
-
-    const workspace = await env.db
-      .prepare(
-        `SELECT * FROM workspaces
-        WHERE created_by=?
-        ORDER BY created_at DESC`,
-      )
-      .bind(user.id)
-      .first<Workspace>()
-
-    if (!workspace) {
-      return redirect('/work/add')
-    }
-
-    return redirect(`/work/${workspace.id}/home`)
+    const url = await workspaceUrl(user.id)
+    return redirect(url)
   }
 
   return (

@@ -6,6 +6,8 @@ import { generateId } from 'lucia'
 import { initGoogleAuth, initLucia, User } from '@/lib/auth'
 import { getEnv } from '@/lib/server/cf'
 
+import { workspaceUrl } from '../../workspace-url'
+
 export const runtime = 'edge'
 
 const PROFILE_URL = 'https://www.googleapis.com/oauth2/v3/userinfo'
@@ -71,7 +73,9 @@ export const GET = async (request: Request) => {
   })
 
   const redirectTo = cookies().get('redirectTo')?.value
-  const userRedirect = user ? '/work' : '/work/add'
+  const userRedirect = user ? await workspaceUrl(user.id) : '/work/add'
+
+  cookies().delete('redirectTo')
 
   return redirect(redirectTo || userRedirect)
   // } catch (e) {

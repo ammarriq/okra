@@ -45,12 +45,12 @@ const menu = [
 ]
 
 type Props = {
-  dialog?: boolean
+  params: { workspace: string }
   user: User
-  workspaceId: string
+  dialog?: boolean
 }
 
-const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
+const Sidebar = async ({ dialog, user, params }: Props) => {
   const env = getEnv()
 
   const folders = await env.db
@@ -59,10 +59,10 @@ const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
       WHERE workspace_id=? AND created_by=?
       ORDER BY created_at DESC`,
     )
-    .bind(workspaceId, user.id)
+    .bind(params.workspace, user.id)
     .all<Folder>()
     .then((o) => o.results)
-   
+
   return (
     <aside
       className={cn(
@@ -71,12 +71,12 @@ const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
         dialog ? '' : 'hidden lg:grid',
       )}
     >
-      <a
-        href={`/work/${workspaceId}`}
+      <Link
+        href={`/work/${params.workspace}`}
         className="max-w-max text-xl lg:mx-0 lg:text-xl"
       >
         <div className="{props.class} font-bold">okra</div>
-      </a>
+      </Link>
 
       <nav className="grid h-full gap-1">
         {menu.map(({ title, url, icon: Icon }) => (
@@ -90,7 +90,7 @@ const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
             <Icon className="size-5" />
 
             <Link
-              href={`/work/${workspaceId}/${url}`}
+              href={`/work/${params.workspace}/${url}`}
               className="w-0 grow truncate whitespace-nowrap text-sm
               font-medium capitalize after:absolute after:inset-0"
             >
@@ -100,7 +100,7 @@ const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
         ))}
       </nav>
 
-      <Folders folders={folders} workspaceId={workspaceId} userId={user.id} />
+      <Folders params={params} folders={folders} userId={user.id} />
     </aside>
   )
 }

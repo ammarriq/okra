@@ -11,11 +11,11 @@ import Sidebar from './sidebar'
 import SidebarToggle from './sidebar-toggle'
 
 type Props = {
+  params: { workspace: string }
   user: User
-  workspaceId: string
 }
 
-const Header = async ({ user, workspaceId }: Props) => {
+const Header = async ({ user, params }: Props) => {
   const env = getEnv()
 
   const workspaces = await env.db
@@ -24,7 +24,7 @@ const Header = async ({ user, workspaceId }: Props) => {
     .all<Workspace>()
     .then((o) => o.results)
 
-  const currentWorkspace = workspaces.find((o) => o.id === workspaceId)
+  const currentWorkspace = workspaces.find((o) => o.id === params.workspace)
 
   if (!currentWorkspace) {
     return notFound()
@@ -33,7 +33,7 @@ const Header = async ({ user, workspaceId }: Props) => {
   return (
     <header className="sticky top-0 flex bg-white px-4 py-3 lg:items-center">
       <SidebarToggle>
-        <Sidebar dialog user={user} workspaceId={workspaceId} />
+        <Sidebar dialog user={user} params={params} />
       </SidebarToggle>
 
       <form method="get" className="relative w-full max-w-[14rem] md:max-w-xs">

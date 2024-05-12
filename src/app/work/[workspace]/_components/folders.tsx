@@ -14,12 +14,12 @@ import { createFolder } from '../actions'
 import Pathname from './active-pathname'
 
 type Props = {
+  params: { workspace: string }
   folders: Folder[]
-  workspaceId: string
   userId: string
 }
 
-const Folders = ({ folders, workspaceId, userId }: Props) => {
+const Folders = ({ folders, params, userId }: Props) => {
   const router = useRouter()
   const [folderList, setFolderList] = useState<Folder[]>(folders)
 
@@ -28,14 +28,14 @@ const Folders = ({ folders, workspaceId, userId }: Props) => {
       id: String(formData.get('id')),
       name: '',
       icon: '',
-      workspace_id: workspaceId,
+      workspace_id: params.workspace,
       updated_at: null,
       created_at: Date.now(),
       created_by: userId,
     }
 
     setFolderList((prev) => [folder, ...prev])
-    router.push(`/work/${workspaceId}/${folder.id}`)
+    router.push(`/work/${params.workspace}/${folder.id}`)
 
     return createFolder(formData)
   }
@@ -46,7 +46,7 @@ const Folders = ({ folders, workspaceId, userId }: Props) => {
         <h3 className="text-sm font-semibold">Pages</h3>
         <form action={action} className="ml-auto">
           <input type="hidden" name="id" value={createId(15)} />
-          <input type="hidden" name="workspace_id" value={workspaceId} />
+          <input type="hidden" name="workspace_id" value={params.workspace} />
 
           <button className="ml-auto">
             <PlusIcon />
@@ -66,7 +66,7 @@ const Folders = ({ folders, workspaceId, userId }: Props) => {
           <FolderIcon className="size-5" />
 
           <Link
-            href={id}
+            href={`/${id}`}
             className="w-0 grow truncate whitespace-nowrap text-sm
             font-medium capitalize after:absolute after:inset-0"
           >

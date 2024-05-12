@@ -13,8 +13,8 @@ const Layout = async ({ params, children }: Props) => {
 
   return (
     <main className="mx-auto grid h-full grid-rows-[auto_minmax(0,1fr)] lg:grid-cols-[auto_minmax(0,1fr)]">
-      <Sidebar user={user} workspaceId={params.workspace} />
-      <Header user={user} workspaceId={params.workspace} />
+      <Sidebar params={params} user={user} />
+      <Header params={params} user={user} />
 
       <div className="h-full overflow-y-auto px-4 pb-3">{children}</div>
     </main>

@@ -83,10 +83,7 @@ const ProfileDropdown = ({ user, workspaces, currentWorkspace }: Props) => {
               </MenuItem>
             ))}
 
-            <MenuItem
-              href="/work/add"
-              className="mt-auto flex w-full cursor-pointer items-center border-t border-border px-2.5 py-2 outline-none data-[focused]:bg-background"
-            >
+            <MenuItem className="mt-auto flex w-full cursor-pointer items-center border-t border-border px-2.5 py-2 outline-none data-[focused]:bg-background">
               <PlusIcon className="size-3" />
               <span className="ml-2 text-sm font-medium">New Workspace</span>
             </MenuItem>
@@ -99,7 +96,6 @@ const ProfileDropdown = ({ user, workspaces, currentWorkspace }: Props) => {
             </Header>
 
             <MenuItem
-              href="/work/add"
               className="flex w-full cursor-pointer items-center px-2.5 py-2 outline-none data-[focused]:bg-background"
               onAction={logout}
             >
@@ -108,7 +104,6 @@ const ProfileDropdown = ({ user, workspaces, currentWorkspace }: Props) => {
             </MenuItem>
 
             <MenuItem
-              href="/work/add"
               className="flex w-full cursor-pointer items-center px-2.5 py-2 outline-none data-[focused]:bg-background"
               onAction={logout}
             >
@@ -117,7 +112,6 @@ const ProfileDropdown = ({ user, workspaces, currentWorkspace }: Props) => {
             </MenuItem>
 
             <MenuItem
-              href="/work/add"
               className="flex w-full cursor-pointer items-center px-2.5 py-2 outline-none data-[focused]:bg-background"
               onAction={logout}
             >
@@ -126,7 +120,6 @@ const ProfileDropdown = ({ user, workspaces, currentWorkspace }: Props) => {
             </MenuItem>
 
             <MenuItem
-              href="/work/add"
               className="mt-auto flex w-full cursor-pointer items-center border-t border-border px-2.5 py-2 outline-none data-[focused]:bg-background"
               onAction={logout}
             >
