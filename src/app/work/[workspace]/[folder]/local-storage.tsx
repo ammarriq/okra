@@ -1,16 +1,17 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import type { Folder as TFolder } from '@/lib/schemas/folder'
 
-import { Folder } from '@/lib/schemas/folder'
+import { Children, cloneElement, useEffect, useState } from 'react'
 
 type Props = {
-  children: React.ReactNode
+  params: { workspace: string; folder: string }
+  children: React.ReactElement
 }
 
 const LocalStorage = ({ children }: Props) => {
   const [loading, setLoading] = useState(true)
-  const [folder, setFolder] = useState<Folder>()
+  const [folder, setFolder] = useState<TFolder>()
 
   const getData = () => {
     const unParsedData = localStorage.getItem('folder')
@@ -22,22 +23,26 @@ const LocalStorage = ({ children }: Props) => {
     setFolder(folder)
   }
 
+  console.log(!loading && folder)
+
   useEffect(() => {
     getData()
   }, [])
 
   return (
     <>
-      {loading ? (
-        <h1>Loading</h1>
-      ) : (
+      {loading ? <h1>Loading...</h1> : null}
+      {!loading && folder ? (
         <>
-          {folder ? (
-            <pre>{JSON.stringify(folder, null, 2)}</pre>
-          ) : (
-            <>{children}</>
-          )}
+          {Children.map(children, (child) => {
+            return cloneElement(child, {
+              ...child.props,
+              newFolder: 'something weird',
+            })
+          })}
         </>
+      ) : (
+        <>{children}</>
       )}
     </>
   )

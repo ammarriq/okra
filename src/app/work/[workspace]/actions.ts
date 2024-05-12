@@ -12,31 +12,32 @@ import { FolderSchema } from '@/lib/schemas/folder'
 import { getEnv } from '@/lib/server/cf'
 
 export const createFolder = async (formData: FormData) => {
-  const env = getEnv()
-  const user = await getUser()
+  await getUser()
 
   const data = decode(formData)
   const schema = pick(FolderSchema, ['id', 'workspace_id'])
   const result = safeParse(schema, data)
 
-  if (!result.success) {
-    return { errors: flatten<typeof schema>(result.issues).nested }
-  }
+  cookies().set('folder', JSON.stringify(result.output))
 
-  const { output } = result
+  // if (!result.success) {
+  //   return { errors: flatten<typeof schema>(result.issues).nested }
+  // }
 
-  env.db
-    .prepare(
-      `INSERT INTO folders
-      (id, workspace_id, created_by, created_at)
-      VALUES(?, ?, ?, ?)`,
-    )
-    .bind(output.id, output.workspace_id, user.id, Date.now())
-    .run()
+  // const { output } = result
+
+  // env.db
+  //   .prepare(
+  //     `INSERT INTO folders
+  //     (id, workspace_id, created_by, created_at)
+  //     VALUES(?, ?, ?, ?)`,
+  //   )
+  //   .bind(output.id, output.workspace_id, user.id, Date.now())
+  //   .run()
 
   // revalidatePath(`/work/${output.workspace_id}`)
 
-  return redirect(`/work/${output.workspace_id}/${output.id}`)
+  // return redirect(`/work/${output.workspace_id}/${output.id}`)
 }
 
 export const logout = async (): Promise<ActionResult> => {

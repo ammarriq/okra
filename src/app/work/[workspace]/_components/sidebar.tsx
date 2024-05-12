@@ -71,7 +71,10 @@ const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
         dialog ? '' : 'hidden lg:grid',
       )}
     >
-      <a href="/app" className="max-w-max text-xl lg:mx-0 lg:text-xl">
+      <a
+        href={`/work/${workspaceId}`}
+        className="max-w-max text-xl lg:mx-0 lg:text-xl"
+      >
         <div className="{props.class} font-bold">okra</div>
       </a>
 

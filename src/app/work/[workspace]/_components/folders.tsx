@@ -34,8 +34,8 @@ const Folders = ({ folders, workspaceId, userId }: Props) => {
       created_by: userId,
     }
 
-    localStorage.setItem('folder', JSON.stringify(folder))
     setFolderList((prev) => [folder, ...prev])
+    router.push(`/work/${workspaceId}/${folder.id}`)
 
     return createFolder(formData)
   }
