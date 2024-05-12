@@ -4,7 +4,7 @@ import { D1Adapter } from '@lucia-auth/adapter-sqlite'
 import { Google } from 'arctic'
 import { Lucia } from 'lucia'
 
-import { env } from '@/lib/env'
+import { env } from '@/lib/env/private'
 
 export const initLucia = (db: D1Database) => {
   const adapter = new D1Adapter(db, {
@@ -34,7 +34,7 @@ export const initGoogleAuth = () => {
   return new Google(
     env.GOOGLE_CLIENT_ID,
     env.GOOGLE_CLIENT_SECRET,
-    env.GOOGLE_REDIRECT_URI
+    env.GOOGLE_REDIRECT_URI,
   )
 }
 

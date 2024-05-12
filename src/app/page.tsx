@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 
+// import { env } from '@/lib/env'
 import { hc } from '@/lib/hono'
 
 export const runtime = 'edge'
@@ -11,8 +12,6 @@ const Page = () => {
     .$get()
     .then((res) => (res.ok ? res.json() : null))
     .then(console.log)
-
-  // console.log(res)
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">

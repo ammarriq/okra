@@ -2,6 +2,6 @@ import type { AppRouter } from '@/server/_app'
 
 import { hc as honoClient } from 'hono/client'
 
-import { env } from './env'
+import { env } from './env/public'
 
-export const hc = honoClient<AppRouter>(`${env.PUBLIC_BASE_API}/api`)
+export const hc = honoClient<AppRouter>(`${env.NEXT_PUBLIC_BASE_API}/api`)
