@@ -9,7 +9,7 @@ export const runtime = 'edge'
 const Page = () => {
   hc.users
     .$get()
-    .then((res) => res.json())
+    .then((res) => (res.ok ? res.json() : null))
     .then(console.log)
 
   // console.log(res)
