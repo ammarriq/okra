@@ -1,3 +1,1 @@
-interface CloudflareEnv {
-  DB: import('@cloudflare/workers-types').D1Database
-}
+type CloudflareEnv = import('@/src/bindings').CloudflareEnv

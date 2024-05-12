@@ -1,14 +1,12 @@
-import { cookies } from 'next/headers'
-
-import Folder from './folder'
-import LocalStorage from './local-storage'
+'use client'
+import { hc } from '@/lib/hono'
 
 type Props = {
   params: { workspace: string; folder: string }
 }
 
-const Pages = async ({ params }: Props) => {
-  const folder = JSON.stringify(cookies().get('folder_id'))
+const Pages = ({ params }: Props) => {
+  const folder = hc.users.$get()
   return (
     <pre>{JSON.stringify(folder)}</pre>
     // <LocalStorage params={params}>
