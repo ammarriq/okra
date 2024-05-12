@@ -1,14 +1,15 @@
-'use client'
 import { hc } from '@/lib/hono'
 
 type Props = {
   params: { workspace: string; folder: string }
 }
 
-const Pages = ({ params }: Props) => {
-  const folder = hc.users.$get()
+const Pages = async ({ params }: Props) => {
+  const res = await hc.users.$get()
+  const data = await res.json()
+
   return (
-    <pre>{JSON.stringify(folder)}</pre>
+    <pre>{JSON.stringify(data, null, 2)}</pre>
     // <LocalStorage params={params}>
     //   <Folder params={params} />
     // </LocalStorage>

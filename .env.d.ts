@@ -1,1 +1,1 @@
-type CloudflareEnv = import('@/src/bindings').CloudflareEnv
+type CloudflareEnv = import('./globals').CloudflareEnv

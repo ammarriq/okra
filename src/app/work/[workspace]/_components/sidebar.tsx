@@ -62,7 +62,7 @@ const Sidebar = async ({ dialog, user, workspaceId }: Props) => {
     .bind(workspaceId, user.id)
     .all<Folder>()
     .then((o) => o.results)
-
+   
   return (
     <aside
       className={cn(

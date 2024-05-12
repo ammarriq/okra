@@ -1,13 +1,23 @@
 import { Hono } from 'hono'
 
+import { HonoContext } from '../_app'
+
 /** Fake database */
 const users = [
   { id: 1, name: 'John' },
   { id: 2, name: 'Carlo' },
 ]
 
-export const userRouter = new Hono()
+export const userRouter = new Hono<HonoContext>()
   .get('/', async (c) => {
+    const user = c.get('user')
+    console.log({ ...user })
+
+    if (!user) {
+      c.status(401)
+      return c.body(null, 401)
+    }
+
     return c.json({ users: users })
   })
   .get('/:id', async (c) => {

@@ -1,3 +1,5 @@
+import type { CloudflareEnv } from '../../globals'
+
 import { Hono } from 'hono'
 import { getCookie, setCookie } from 'hono/cookie'
 import { csrf } from 'hono/csrf'
@@ -8,17 +10,19 @@ import { initLucia } from '@/lib/auth'
 
 import { userRouter } from './routes/user-router'
 
-const app = new Hono<{
-  Bindings: { DB: import('@cloudflare/workers-types').D1Database }
+export type HonoContext = {
+  Bindings: CloudflareEnv
   Variables: {
     user: User | null
     session: Session | null
   }
-}>()
+}
+
+const app = new Hono<HonoContext>()
 
 app.use(csrf())
 app.use('*', async (c, next) => {
-  const lucia = initLucia(c.env.DB)
+  const lucia = initLucia(process.env.DB)
   const sessionId = getCookie(c, lucia.sessionCookieName)
 
   if (!sessionId) {
