@@ -11,7 +11,6 @@ const users = [
 export const userRouter = new Hono<HonoContext>()
   .get('/', async (c) => {
     const user = c.get('user')
-    console.log({ ...user })
 
     if (!user) {
       c.status(401)
