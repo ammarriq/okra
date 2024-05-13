@@ -29,6 +29,7 @@ const Page = async ({ searchParams }: Props) => {
       <p className="pb-4 text-4xl font-bold">Log in</p>
       <Link
         href={`/auth/google?redirectTo=${searchParams?.redirectTo ?? ''}`}
+        prefetch={false}
         className="flex w-full max-w-60 items-center justify-center gap-2
         rounded border py-2 text-sm font-medium hover:bg-gray-100"
       >
