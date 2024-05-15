@@ -1,4 +1,4 @@
-import type { AppRouter } from '@/server/_app'
+import type { AppRouter } from '@/app-server/_app'
 
 import { hc as honoClient } from 'hono/client'
 

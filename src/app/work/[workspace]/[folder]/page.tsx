@@ -1,26 +1,13 @@
 import { cookies } from 'next/headers'
 
+import { hc } from '@/app-server/hono'
+
 type Props = {
   params: { workspace: string; folder: string }
 }
 
-const Pages = ({ params }: Props) => {
+const Pages = async ({ params }: Props) => {
   const folder_id = cookies().get('folder_id')?.value
-  // const allCookies = cookies()
-  //   .getAll()
-  //   .map((cookie) => [cookie.name, cookie.value])
-
-  // const res = await hc.users.$get(
-  //   {},
-  //   { headers: { Cookie: Object.fromEntries(allCookies) } },
-  // )
-
-  // try {
-  //   const data = await res.json()
-  //   console.log(data)
-  // } catch (error) {
-  //   console.log(error)
-  // }
 
   return (
     <pre>{folder_id}</pre>
