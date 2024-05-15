@@ -17,7 +17,7 @@ export const userRouter = new Hono<HonoContext>()
       return c.body(null, 401)
     }
 
-    return c.json({ users: users })
+    return c.json({ users })
   })
   .get('/:id', async (c) => {
     const id = c.req.param('id')

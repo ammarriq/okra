@@ -3,7 +3,7 @@
 import Link from 'next/link'
 
 // import { env } from '@/lib/env'
-import { hc } from '@/lib/hono'
+import { hc } from '@/app-server/hono'
 
 export const runtime = 'edge'
 

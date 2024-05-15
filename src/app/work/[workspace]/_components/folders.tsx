@@ -9,8 +9,6 @@ import { DotsHorizontalIcon, FolderIcon, PlusIcon } from '@/lib/icons'
 import { Folder } from '@/lib/schemas/folder'
 import { createId } from '@/lib/utils/random'
 
-import { createFolder } from '../actions'
-
 import Pathname from './active-pathname'
 
 type Props = {
@@ -35,9 +33,9 @@ const Folders = ({ folders, params, userId }: Props) => {
     }
 
     setFolderList((prev) => [folder, ...prev])
-    router.push(`/work/${params.workspace}/${folder.id}`)
 
-    return createFolder(formData)
+    document.cookie = `folder_id=${folder.id}; secure`
+    router.push(`/work/${params.workspace}/${folder.id}`)
   }
 
   return (
@@ -56,17 +54,17 @@ const Folders = ({ folders, params, userId }: Props) => {
 
       {folderList.map(({ id, name }) => (
         <Pathname
-          key={id}
+          key={`/work/${params.workspace}/${id}`}
           className="group relative flex w-full items-center gap-2.5 rounded-lg
           border border-transparent p-1.5 text-foreground/50 hover:border-border
           hover:bg-white hover:text-foreground lg:px-2.5 lg:py-2"
           activeClass="border-border bg-white text-foreground"
-          includes={id}
+          includes={`/work/${params.workspace}/${id}`}
         >
           <FolderIcon className="size-5" />
 
           <Link
-            href={`/${id}`}
+            href={`/work/${params.workspace}/${id}`}
             className="w-0 grow truncate whitespace-nowrap text-sm
             font-medium capitalize after:absolute after:inset-0"
           >

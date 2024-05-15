@@ -1,10 +1,8 @@
-import { cookies } from 'next/headers'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 
 import { validateRequest } from '@/lib/auth'
 import { GoogleIcon } from '@/lib/icons'
-import { Workspace } from '@/lib/schemas/workspace'
 import { getEnv } from '@/lib/server/cf'
 
 import { workspaceUrl } from './workspace-url'

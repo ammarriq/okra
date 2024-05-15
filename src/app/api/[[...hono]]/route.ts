@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { handle } from 'hono/vercel'
 
-import { appRouter } from '@/server/_app'
+import { appRouter } from '@/app-server/_app'
 
 export const runtime = 'edge'
 

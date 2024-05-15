@@ -49,6 +49,8 @@ app.use('*', async (c, next) => {
     })
   }
 
+  console.log('from cookies middleware', user)
+
   c.set('user', user)
   c.set('session', session)
   return next()
