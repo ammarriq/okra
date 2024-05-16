@@ -67,18 +67,18 @@ const Sidebar = async ({ dialog, user, params }: Props) => {
     <aside
       className={cn(
         `fixed inset-0 z-20 row-span-2 grid h-screen w-full grid-rows-[auto_auto_auto_minmax(0,1fr)]
-        gap-4 bg-background px-3.5 py-2 lg:sticky lg:top-0 lg:w-60 lg:px-4`,
+        gap-4 bg-background py-2 lg:sticky lg:top-0 lg:w-60`,
         dialog ? '' : 'hidden lg:grid',
       )}
     >
       <Link
         href={`/work/${params.workspace}`}
-        className="max-w-max text-xl lg:mx-0 lg:text-xl"
+        className="max-w-max px-3.5 text-xl lg:mx-0 lg:px-4 lg:text-xl"
       >
         <div className="{props.class} font-bold">okra</div>
       </Link>
 
-      <nav className="grid h-full gap-1">
+      <nav className="grid h-full gap-1 px-3.5 lg:px-4">
         {menu.map(({ title, url, icon: Icon }) => (
           <Pathname
             key={url}

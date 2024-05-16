@@ -23,7 +23,7 @@ const Folders = ({ folders, params, userId }: Props) => {
 
   const action = async (formData: FormData) => {
     const folder: Folder = {
-      id: String(formData.get('id')),
+      id: createId(15),
       name: '',
       icon: '',
       workspace_id: params.workspace,
@@ -34,13 +34,13 @@ const Folders = ({ folders, params, userId }: Props) => {
 
     setFolderList((prev) => [folder, ...prev])
 
-    document.cookie = `folder_id=${folder.id}; secure`
+    document.cookie = `folder_id=${folder.id}; path=/; secure`
     router.push(`/work/${params.workspace}/${folder.id}`)
   }
 
   return (
-    <nav className="flex h-full flex-col gap-1 pt-4">
-      <hgroup className="mb-2 flex items-center px-1.5 text-foreground/50 lg:px-2.5">
+    <nav className="flex h-full flex-col gap-1 overflow-auto pt-4">
+      <hgroup className="mb-2 flex items-center px-5 text-foreground/50 lg:px-6">
         <h3 className="text-sm font-semibold">Pages</h3>
         <form action={action} className="ml-auto">
           <input type="hidden" name="id" value={createId(15)} />
@@ -52,30 +52,32 @@ const Folders = ({ folders, params, userId }: Props) => {
         </form>
       </hgroup>
 
-      {folderList.map(({ id, name }) => (
-        <Pathname
-          key={`/work/${params.workspace}/${id}`}
-          className="group relative flex w-full items-center gap-2.5 rounded-lg
-          border border-transparent p-1.5 text-foreground/50 hover:border-border
-          hover:bg-white hover:text-foreground lg:px-2.5 lg:py-2"
-          activeClass="border-border bg-white text-foreground"
-          includes={`/work/${params.workspace}/${id}`}
-        >
-          <FolderIcon className="size-5" />
-
-          <Link
-            href={`/work/${params.workspace}/${id}`}
-            className="w-0 grow truncate whitespace-nowrap text-sm
-            font-medium capitalize after:absolute after:inset-0"
+      <ul className="overflow-auto px-3.5 lg:px-4">
+        {folderList.map(({ id, name }) => (
+          <Pathname
+            key={`/work/${params.workspace}/${id}`}
+            className="group relative flex w-full items-center gap-2.5 rounded-lg
+            border border-transparent p-1.5 text-foreground/50 hover:border-border
+            hover:bg-white hover:text-foreground lg:px-2.5 lg:py-2"
+            activeClass="border-border bg-white text-foreground"
+            includes={`/work/${params.workspace}/${id}`}
           >
-            {name || 'Untitled'}
-          </Link>
+            <FolderIcon className="size-5" />
 
-          <Button className="relative hidden rounded-lg px-1 py-0.5 group-hover:flex group-hover:bg-background">
-            <DotsHorizontalIcon className="size-4" />
-          </Button>
-        </Pathname>
-      ))}
+            <Link
+              href={`/work/${params.workspace}/${id}`}
+              className="w-0 grow truncate whitespace-nowrap text-sm
+            font-medium capitalize after:absolute after:inset-0"
+            >
+              {name || 'Untitled'}
+            </Link>
+
+            <Button className="relative hidden rounded-lg px-1 py-0.5 group-hover:flex group-hover:bg-background">
+              <DotsHorizontalIcon className="size-4" />
+            </Button>
+          </Pathname>
+        ))}
+      </ul>
     </nav>
   )
 }
