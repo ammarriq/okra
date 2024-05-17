@@ -45,7 +45,7 @@ const menu = [
 ]
 
 type Props = {
-  params: { workspace: string }
+  params: { workspace: string; folder?: string }
   user: User
   dialog?: boolean
 }
@@ -100,7 +100,7 @@ const Sidebar = async ({ dialog, user, params }: Props) => {
         ))}
       </nav>
 
-      <Folders params={params} folders={folders} userId={user.id} />
+      <Folders folders={folders} userId={user.id} />
     </aside>
   )
 }

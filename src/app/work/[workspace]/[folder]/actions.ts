@@ -29,3 +29,16 @@ export const createFolder = async (id: string, workspace_id: string) => {
 
   return folder
 }
+
+export const deleteFolder = async (id: string) => {
+  const env = getEnv()
+  const user = await getUser()
+
+  await env.db
+    .prepare(
+      `DELETE FROM folders
+      WHERE id=? AND created_by=?`,
+    )
+    .bind(id, user.id)
+    .run()
+}

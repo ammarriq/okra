@@ -4,7 +4,7 @@ import Header from './_components/header'
 import Sidebar from './_components/sidebar'
 
 type Props = {
-  params: { workspace: string }
+  params: { workspace: string; folder?: string }
   children: React.ReactNode
 }
 

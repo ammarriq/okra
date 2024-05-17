@@ -1,27 +1,48 @@
 'use client'
 
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useParams, useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { Button } from 'react-aria-components'
+import {
+  Button,
+  Dialog,
+  Menu,
+  MenuItem,
+  MenuTrigger,
+  Modal,
+  ModalOverlay,
+} from 'react-aria-components'
+import { Popover } from 'react-aria-components'
 
-import { DotsHorizontalIcon, FolderIcon, PlusIcon } from '@/lib/icons'
+import { parseCookies, serializeCookie } from 'oslo/cookie'
+
+import {
+  DotsHorizontalIcon,
+  ExternalLinkIcon,
+  FolderIcon,
+  LinkIcon,
+  PlusIcon,
+  TrashIcon,
+} from '@/lib/icons'
 import { Folder } from '@/lib/schemas/folder'
 import { createId } from '@/lib/utils/random'
+
+import { deleteFolder } from '../[folder]/actions'
 
 import Pathname from './active-pathname'
 
 type Props = {
-  params: { workspace: string }
   folders: Folder[]
   userId: string
 }
 
-const Folders = ({ folders, params, userId }: Props) => {
+const Folders = ({ folders, userId }: Props) => {
   const router = useRouter()
+  const params = useParams<{ workspace: string; folder?: string }>()
+
   const [folderList, setFolderList] = useState<Folder[]>(folders)
 
-  const action = async (formData: FormData) => {
+  const action = async () => {
     const folder: Folder = {
       id: createId(15),
       name: '',
@@ -34,8 +55,16 @@ const Folders = ({ folders, params, userId }: Props) => {
 
     setFolderList((prev) => [folder, ...prev])
 
-    document.cookie = `folder_id=${folder.id}; path=/; secure`
-    router.push(`/work/${params.workspace}/${folder.id}`)
+    document.cookie = serializeCookie('folder_id', folder.id, {
+      path: '/',
+      secure: true,
+    })
+
+    const cookies = parseCookies(document.cookie)
+
+    if (cookies.get('folder_id') === folder.id) {
+      router.push(`/work/${params.workspace}/${folder.id}`)
+    }
   }
 
   return (
@@ -67,18 +96,119 @@ const Folders = ({ folders, params, userId }: Props) => {
             <Link
               href={`/work/${params.workspace}/${id}`}
               className="w-0 grow truncate whitespace-nowrap text-sm
-            font-medium capitalize after:absolute after:inset-0"
+              font-medium capitalize after:absolute after:inset-0"
             >
               {name || 'Untitled'}
             </Link>
 
-            <Button className="relative hidden rounded-lg px-1 py-0.5 group-hover:flex group-hover:bg-background">
-              <DotsHorizontalIcon className="size-4" />
-            </Button>
+            <FolderOptions
+              deleteAction={async () => {
+                deleteFolder(id)
+                setFolderList((prev) => prev.filter((o) => o.id !== id))
+
+                if (params.folder === id) {
+                  router.push(`/work/${params.workspace}`)
+                }
+              }}
+            />
           </Pathname>
         ))}
       </ul>
     </nav>
+  )
+}
+
+const FolderOptions = ({
+  deleteAction,
+}: {
+  deleteAction: () => Promise<void>
+}) => {
+  const [isDelete, setIsDelete] = useState(false)
+
+  return (
+    <>
+      <MenuTrigger>
+        <Button className="relative hidden rounded-lg px-1 py-0.5 group-hover:flex group-hover:bg-background">
+          <DotsHorizontalIcon className="size-4" />
+        </Button>
+
+        <Popover
+          placement="bottom left"
+          className="mr-4 w-40 origin-top-right divide-x rounded-lg border border-border
+          bg-white shadow fill-mode-forwards entering:animate-in entering:fade-in entering:zoom-in-95
+          exiting:animate-out exiting:fade-out exiting:zoom-out-95 sm:w-48"
+        >
+          <Menu
+            className="rounded-lg p-1 outline-none *:flex *:w-full *:cursor-pointer *:items-center
+            *:rounded-md *:px-2 *:py-1.5 *:text-left *:text-sm *:outline-none hover:*:bg-background"
+          >
+            <MenuItem className="text-foreground/80">
+              <ExternalLinkIcon className="mr-2 size-4" />
+              <span>Share</span>
+            </MenuItem>
+
+            <MenuItem className="text-foreground/80">
+              <LinkIcon className="mr-2 size-4" />
+              <span>Copy link</span>
+            </MenuItem>
+
+            <MenuItem
+              className="text-danger"
+              onAction={() => setIsDelete(true)}
+            >
+              <TrashIcon className="mr-2 size-4" />
+              <span>Delete</span>
+            </MenuItem>
+          </Menu>
+        </Popover>
+      </MenuTrigger>
+
+      <ModalOverlay
+        isOpen={isDelete}
+        onOpenChange={setIsDelete}
+        className={({ isEntering, isExiting }) => `
+          fixed inset-0 z-50 flex min-h-full items-center justify-center overflow-y-auto bg-black/40 p-4 text-center
+          ${isEntering ? 'duration-150 ease-out animate-in fade-in' : ''}
+          ${isExiting ? 'duration-150 ease-in animate-out fade-out' : ''}
+        `}
+      >
+        <Modal
+          className={({ isEntering, isExiting }) => `
+            w-full max-w-72 overflow-hidden rounded-md bg-white p-6 text-left align-middle shadow-xl
+            ${isEntering ? 'duration-150 ease-out animate-in zoom-in-95' : ''}
+            ${isExiting ? 'duration-150 ease-in animate-out zoom-out-95' : ''}
+          `}
+        >
+          <Dialog
+            aria-label="Delete folder"
+            role="alertdialog"
+            className="relative outline-none"
+          >
+            {({ close }) => (
+              <>
+                <p className="text-center text-foreground/80">
+                  Are you sure you want to delete this page?
+                </p>
+                <div className="mt-6 space-y-2">
+                  <Button
+                    className="w-full rounded border border-danger bg-danger/10 px-4 py-1.5 text-sm text-danger"
+                    onPress={() => deleteAction().then(close)}
+                  >
+                    Yes, Delete this page
+                  </Button>
+                  <Button
+                    className="w-full rounded border border-border px-4 py-1.5 text-sm text-foreground"
+                    onPress={close}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </>
+            )}
+          </Dialog>
+        </Modal>
+      </ModalOverlay>
+    </>
   )
 }
 
