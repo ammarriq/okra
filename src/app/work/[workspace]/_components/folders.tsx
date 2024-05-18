@@ -104,7 +104,7 @@ const Folders = ({ folders, userId }: Props) => {
             <FolderOptions
               deleteAction={async () => {
                 if (params.folder === id) {
-                  router.push(`/work/${params.workspace}`)
+                  router.push(`/work/${params.workspace}/home`)
                 }
 
                 deleteFolder(id)
