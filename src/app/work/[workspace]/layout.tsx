@@ -1,4 +1,4 @@
-import { getUser } from '@/lib/auth'
+import { getUser, redirectToLogin } from '@/lib/auth'
 
 import Header from './_components/header'
 import Sidebar from './_components/sidebar'
@@ -10,6 +10,7 @@ type Props = {
 
 const Layout = async ({ params, children }: Props) => {
   const user = await getUser()
+  if (!user) return redirectToLogin()
 
   return (
     <main className="mx-auto grid h-full grid-rows-[auto_minmax(0,1fr)] lg:grid-cols-[auto_minmax(0,1fr)]">

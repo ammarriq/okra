@@ -41,16 +41,16 @@ export const validateRequest = cache(async (db) => {
   return result
 }) satisfies ValidateRequest
 
+export const redirectToLogin = () => {
+  const pathname = headers().get('next-path')
+  const url = pathname ? `/auth?redirectTo=${pathname}` : '/auth'
+
+  return redirect(url)
+}
+
 export const getUser = async () => {
   const env = getEnv()
   const { user } = await validateRequest(env.db)
-
-  if (!user) {
-    const pathname = headers().get('next-path')
-    const url = pathname ? `/auth?redirectTo=${pathname}` : '/auth'
-
-    return redirect(url)
-  }
 
   return user
 }

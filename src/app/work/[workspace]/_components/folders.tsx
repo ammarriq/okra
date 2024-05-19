@@ -14,7 +14,8 @@ import {
 } from 'react-aria-components'
 import { Popover } from 'react-aria-components'
 
-import { parseCookies, serializeCookie } from 'oslo/cookie'
+import { useMutation } from '@tanstack/react-query'
+import { serializeCookie } from 'oslo/cookie'
 
 import {
   DotsHorizontalIcon,
@@ -27,7 +28,7 @@ import {
 import { Folder } from '@/lib/schemas/folder'
 import { createId } from '@/lib/utils/random'
 
-import { deleteFolder } from '../[folder]/actions'
+import { createFolder, deleteFolder } from '../[folder]/actions'
 
 import Pathname from './active-pathname'
 
@@ -42,36 +43,37 @@ const Folders = ({ folders, userId }: Props) => {
 
   const [folderList, setFolderList] = useState<Folder[]>(folders)
 
-  const action = async () => {
-    const folder: Folder = {
-      id: createId(15),
-      name: '',
-      icon: '',
-      workspace_id: params.workspace,
-      updated_at: null,
-      created_at: Date.now(),
-      created_by: userId,
-    }
+  const { mutate } = useMutation({
+    mutationFn: async () => {
+      const folder: Folder = {
+        id: createId(15),
+        name: '',
+        icon: '',
+        workspace_id: params.workspace,
+        updated_at: null,
+        created_at: Date.now(),
+        created_by: userId,
+      }
 
-    setFolderList((prev) => [folder, ...prev])
+      document.cookie = serializeCookie('folder_id', folder.id, {
+        path: '/',
+        secure: true,
+      })
 
-    document.cookie = serializeCookie('folder_id', folder.id, {
-      path: '/',
-      secure: true,
-    })
-
-    const cookies = parseCookies(document.cookie)
-
-    if (cookies.get('folder_id') === folder.id) {
+      setFolderList((prev) => [folder, ...prev])
       router.push(`/work/${params.workspace}/${folder.id}`)
-    }
-  }
+
+      return createFolder(folder.id, params.workspace)
+    },
+  })
+
+  const action = async () => {}
 
   return (
     <nav className="flex h-full flex-col gap-1 overflow-auto pt-4">
       <hgroup className="mb-2 flex items-center px-5 text-foreground/50 lg:px-6">
         <h3 className="text-sm font-semibold">Pages</h3>
-        <form action={action} className="ml-auto">
+        <form action={() => mutate()} className="ml-auto">
           <input type="hidden" name="id" value={createId(15)} />
           <input type="hidden" name="workspace_id" value={params.workspace} />
 

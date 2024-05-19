@@ -5,7 +5,7 @@ import { Folder } from '@/lib/schemas/folder'
 import { HonoContext } from '../_app'
 
 export const foldersRouter = new Hono<HonoContext>()
-  .get('/:workspace_id', async (c) => {
+  .get('/workspace/:workspace_id', async (c) => {
     const db = process.env.DB
     const user = c.get('user')
 
@@ -25,8 +25,6 @@ export const foldersRouter = new Hono<HonoContext>()
       .bind(workspace_id, user.id)
       .all<Folder>()
       .then((o) => o.results)
-
-    console.log({ folders, workspace_id, id: user.id })
 
     return c.json({ folders })
   })

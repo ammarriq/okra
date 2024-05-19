@@ -5,10 +5,6 @@ import { serializeCookie } from 'oslo/cookie'
 import { initLucia } from '@/lib/auth'
 import { getEnv } from '@/lib/server/cf'
 
-export const deleteCookie = (name: string) => {
-  cookies().delete(name)
-}
-
 export const getSessionCookie = () => {
   const env = getEnv()
   const lucia = initLucia(env.db)

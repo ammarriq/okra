@@ -1,12 +1,14 @@
 'use server'
 
-import { getUser } from '@/lib/auth'
+import { getUser, redirectToLogin } from '@/lib/auth'
 import { Folder } from '@/lib/schemas/folder'
 import { getEnv } from '@/lib/server/cf'
 
 export const createFolder = async (id: string, workspace_id: string) => {
   const env = getEnv()
+
   const user = await getUser()
+  if (!user) return redirectToLogin()
 
   const folder: Folder = {
     id,
@@ -32,7 +34,9 @@ export const createFolder = async (id: string, workspace_id: string) => {
 
 export const deleteFolder = async (id: string) => {
   const env = getEnv()
+
   const user = await getUser()
+  if (!user) return redirectToLogin()
 
   await env.db
     .prepare(

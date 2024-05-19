@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 
-import { deleteCookie } from '@/lib/server/cookie'
+import { deleteCookie } from '@/lib/server/delete-cookie'
 
 type Props = {
   name: string

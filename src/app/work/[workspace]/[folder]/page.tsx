@@ -1,15 +1,15 @@
 import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
 
-import { serializeCookie } from 'oslo/cookie'
+import { QueryClient } from '@tanstack/react-query'
 
-import { getUser, initLucia } from '@/lib/auth'
+import { getUser, redirectToLogin } from '@/lib/auth'
 import { Folder as TFolder } from '@/lib/schemas/folder'
-import { getEnv } from '@/lib/server/cf'
-import { hc } from '@/app-server/hono'
+import { getSessionCookie } from '@/lib/server/cookie'
+import { createId } from '@/lib/utils/random'
+import { getFolder } from '@/app-server/queries/folders'
 import DeleteCookie from '@/components/delete-cookie'
 
-import { createFolder } from './actions'
 import Folder from './folder'
 
 type Props = {
@@ -17,41 +17,45 @@ type Props = {
 }
 
 const Page = async ({ params }: Props) => {
-  const env = getEnv()
-  const cookie = cookies().get(initLucia(env.db).sessionCookieName)
-  if (!cookie?.name || !cookie.value) return <p>Something went wrong</p>
+  const user = await getUser()
+  if (!user) return redirectToLogin()
 
-  const res = await hc.workspaces.$get(undefined, {
-    headers: { Cookie: serializeCookie(cookie.name, cookie.value, {}) },
+  const folder_id = cookies().get('folder_id')?.value
+
+  if (folder_id) {
+    const folder: TFolder = {
+      id: createId(15),
+      name: '',
+      icon: '',
+      workspace_id: params.workspace,
+      updated_at: null,
+      created_at: Date.now(),
+      created_by: user.id,
+    }
+
+    return (
+      <DeleteCookie name="folder_id">
+        <Folder folder={folder} />
+      </DeleteCookie>
+    )
+  }
+
+  const queryClient = new QueryClient()
+  const folder = await queryClient.fetchQuery({
+    queryKey: ['folders', params.folder],
+    queryFn: () => {
+      return getFolder({
+        cookie: getSessionCookie(),
+        params: { id: params.folder },
+      })
+    },
   })
 
-  const data = await res.json()
+  if (!folder) {
+    return notFound()
+  }
 
-  // const user = await getUser()
-  // const folder_id = cookies().get('folder_id')?.value
-
-  // if (folder_id) {
-  //   const folder = await createFolder(folder_id, params.workspace)
-  //   return (
-  //     <DeleteCookie name="folder_id">
-  //       <Folder folder={folder} />
-  //     </DeleteCookie>
-  //   )
-  // }
-
-  // const env = getEnv()
-  // const folder = await env.db
-  //   .prepare('SELECT * FROM folders WHERE id=? AND created_by=?')
-  //   .bind(params.folder, user.id)
-  //   .first<TFolder>()
-
-  // if (!folder) {
-  //   return notFound()
-  // }
-
-  // return <Folder folder={folder} />
-
-  return <pre>{JSON.stringify(data, null, 2)}</pre>
+  return <Folder folder={folder} />
 }
 
 export default Page
