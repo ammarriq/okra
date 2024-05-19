@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 
 import { Inter } from 'next/font/google'
 
-import { ClientProviders } from './providers'
+import Providers from './providers'
 
 export const runtime = 'edge'
 
@@ -19,7 +19,7 @@ const Layout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ClientProviders>{children}</ClientProviders>
+        <Providers>{children}</Providers>
       </body>
     </html>
   )

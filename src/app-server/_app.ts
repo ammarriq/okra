@@ -8,7 +8,8 @@ import { Session } from 'lucia'
 
 import { initLucia } from '@/lib/auth'
 
-import { userRouter } from './routes/user-router'
+import { foldersRouter } from './routes/folders'
+import { workspacesRouter } from './routes/workspaces'
 
 export type HonoContext = {
   Bindings: CloudflareEnv
@@ -49,8 +50,6 @@ app.use('*', async (c, next) => {
     })
   }
 
-  console.log('from cookies middleware', user)
-
   c.set('user', user)
   c.set('session', session)
   return next()
@@ -59,7 +58,9 @@ app.use('*', async (c, next) => {
 /**
  * The base router. Include all the routes here from `./routes/*`
  */
-export const appRouter = app.route('/users', userRouter)
+export const appRouter = app
+  .route('/workspaces', workspacesRouter)
+  .route('/folders', foldersRouter)
 
 /** Exported type definition for the hono/client. */
 export type AppRouter = typeof appRouter

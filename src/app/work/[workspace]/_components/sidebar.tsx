@@ -1,5 +1,7 @@
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 
+import { QueryClient } from '@tanstack/react-query'
 import { User } from 'lucia'
 
 import {
@@ -11,7 +13,9 @@ import {
 } from '@/lib/icons'
 import { Folder } from '@/lib/schemas/folder'
 import { getEnv } from '@/lib/server/cf'
+import { getSessionCookie } from '@/lib/server/cookie'
 import { cn } from '@/lib/utils/cn'
+import { getFolders } from '@/app-server/queries/folders'
 
 import Pathname from './active-pathname'
 import Folders from './folders'
@@ -51,17 +55,18 @@ type Props = {
 }
 
 const Sidebar = async ({ dialog, user, params }: Props) => {
-  const env = getEnv()
+  const queryClient = new QueryClient()
+  const folders = await queryClient.fetchQuery({
+    queryKey: ['folders', params.workspace],
+    queryFn: () => {
+      return getFolders({
+        cookie: getSessionCookie(),
+        params: { workspace_id: params.workspace },
+      })
+    },
+  })
 
-  const folders = await env.db
-    .prepare(
-      `SELECT * FROM folders
-      WHERE workspace_id=? AND created_by=?
-      ORDER BY created_at DESC`,
-    )
-    .bind(params.workspace, user.id)
-    .all<Folder>()
-    .then((o) => o.results)
+  if (!folders) return notFound()
 
   return (
     <aside

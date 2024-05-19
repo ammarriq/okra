@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 
-import { deleteCookie } from '@/lib/server/delete-cookie'
+import { deleteCookie } from '@/lib/server/cookie'
 
 type Props = {
   name: string
@@ -11,8 +11,6 @@ type Props = {
 
 const DeleteCookie = ({ name, children }: Props) => {
   useEffect(() => {
-    console.log('running')
-
     deleteCookie(name)
   })
 

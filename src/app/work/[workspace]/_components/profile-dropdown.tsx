@@ -83,7 +83,10 @@ const ProfileDropdown = ({ user, workspaces, currentWorkspace }: Props) => {
               </MenuItem>
             ))}
 
-            <MenuItem className="mt-auto flex w-full cursor-pointer items-center border-t border-border px-2.5 py-2 outline-none data-[focused]:bg-background">
+            <MenuItem
+              className="mt-auto flex w-full cursor-pointer items-center border-t border-border px-2.5 py-2 outline-none data-[focused]:bg-background"
+              href="/work/add"
+            >
               <PlusIcon className="size-3" />
               <span className="ml-2 text-sm font-medium">New Workspace</span>
             </MenuItem>

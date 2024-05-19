@@ -1,10 +1,11 @@
 import { notFound } from 'next/navigation'
 
+import { QueryClient } from '@tanstack/react-query'
 import { User } from 'lucia'
 
 import { CommandIcon, SearchIcon } from '@/lib/icons'
-import { Workspace } from '@/lib/schemas/workspace'
-import { getEnv } from '@/lib/server/cf'
+import { getSessionCookie } from '@/lib/server/cookie'
+import { getWorkspaces } from '@/app-server/queries/workspaces'
 
 import ProfileDropdown from './profile-dropdown'
 import Sidebar from './sidebar'
@@ -16,19 +17,19 @@ type Props = {
 }
 
 const Header = async ({ user, params }: Props) => {
-  const env = getEnv()
+  const queryClient = new QueryClient()
+  const workspaces = await queryClient.fetchQuery({
+    queryKey: ['workspaces'],
+    queryFn: () => {
+      return getWorkspaces({
+        cookie: getSessionCookie(),
+      })
+    },
+  })
 
-  const workspaces = await env.db
-    .prepare('SELECT * FROM workspaces WHERE created_by=?')
-    .bind(user.id)
-    .all<Workspace>()
-    .then((o) => o.results)
+  const workspace = workspaces?.find((o) => o.id === params.workspace)
 
-  const currentWorkspace = workspaces.find((o) => o.id === params.workspace)
-
-  if (!currentWorkspace) {
-    return notFound()
-  }
+  if (!workspaces || !workspace) return notFound()
 
   return (
     <header className="sticky top-0 flex bg-white px-4 py-3 lg:items-center">
@@ -60,7 +61,7 @@ const Header = async ({ user, params }: Props) => {
 
       <ProfileDropdown
         user={user}
-        currentWorkspace={currentWorkspace}
+        currentWorkspace={workspace}
         workspaces={workspaces}
       />
     </header>
