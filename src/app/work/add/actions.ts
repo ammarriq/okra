@@ -5,13 +5,15 @@ import { redirect } from 'next/navigation'
 import { decode } from 'decode-formdata'
 import { flatten, pick, safeParse } from 'valibot'
 
-import { getUser } from '@/lib/auth'
+import { getUser, redirectToLogin } from '@/lib/auth'
 import { WorkspaceSchema } from '@/lib/schemas/workspace'
 import { getEnv } from '@/lib/server/cf'
 import { createId } from '@/lib/utils/random'
 
 export const createWorkspace = async (_: any, formData: FormData) => {
   const user = await getUser()
+  if (!user) return redirectToLogin()
+
   const env = getEnv()
 
   const data = decode(formData)
