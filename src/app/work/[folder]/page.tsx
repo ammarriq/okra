@@ -5,7 +5,6 @@ import { QueryClient } from '@tanstack/react-query'
 
 import { getUser, redirectToLogin } from '@/lib/auth'
 import { Folder as TFolder } from '@/lib/schemas/folder'
-import { createId } from '@/lib/utils/random'
 import { getFolder } from '@/app-server/queries/folders'
 
 import Folder from './folder'
@@ -26,19 +25,18 @@ const Page = async ({ params }: Props) => {
   }
 
   const queryClient = new QueryClient()
-  const folder = await queryClient.fetchQuery({
+  const { data } = await queryClient.fetchQuery({
     queryKey: ['folders', params.folder],
     queryFn: () => {
       return getFolder({
         cookie: headers().get('cookie') ?? '',
-        params: { id: params.folder },
+        where: { id: params.folder },
       })
     },
   })
 
-  if (!folder) return notFound()
-
-  return <Folder folder={folder} />
+  if (!data.folder) return notFound()
+  return <Folder folder={data.folder} />
 }
 
 export default Page

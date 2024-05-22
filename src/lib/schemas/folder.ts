@@ -18,7 +18,6 @@ export const FolderSchema = object({
     mimeType(['image/png', 'image/jpeg'], 'Only JPEG/PNG allowed'),
     maxSize(1024 * 1024 * 1, 'Icon should be less than 1MB'),
   ]),
-  workspace_id: string([length(15, 'Workspace is required')]),
   created_by: string([length(15, 'User is required')]),
   updated_at: nullable(number()),
   created_at: number(),

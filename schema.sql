@@ -18,23 +18,11 @@ CREATE TABLE IF NOT EXISTS sessions (
   FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
 
-DROP TABLE IF EXISTS workspaces;
-CREATE TABLE IF NOT EXISTS workspaces (
-  id TEXT NOT NULL PRIMARY KEY,
-  name TEXT,
-  icon TEXT,
-  created_by TEXT NOT NULL,
-  updated_at INTEGER,
-  created_at INTEGER NOT NULL,
-  FOREIGN KEY (created_by) REFERENCES users (id) ON DELETE CASCADE
-);
-
 DROP TABLE IF EXISTS folders;
 CREATE TABLE IF NOT EXISTS folders (
   id TEXT NOT NULL PRIMARY KEY,
   name TEXT,
   icon TEXT,
-  workspace_id TEXT NOT NULL,
   created_by TEXT NOT NULL,
   updated_at INTEGER,
   created_at INTEGER NOT NULL,

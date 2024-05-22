@@ -1,19 +1,10 @@
-import { headers } from 'next/headers'
-import { notFound } from 'next/navigation'
-
-import {
-  dehydrate,
-  HydrationBoundary,
-  QueryClient,
-} from '@tanstack/react-query'
 import { User } from 'lucia'
 
 import { CommandIcon, SearchIcon } from '@/lib/icons'
-import { getWorkspaces } from '@/app-server/queries/workspaces'
 
 import ProfileDropdown from './profile-dropdown'
 import Sidebar from './sidebar'
-import SidebarToggle from './sidebar-toggle'
+import SidebarMobile from './sidebar-mobile'
 
 type Props = {
   params: { workspace: string }
@@ -21,25 +12,11 @@ type Props = {
 }
 
 const Header = async ({ user, params }: Props) => {
-  const queryClient = new QueryClient()
-  const workspaces = await queryClient.fetchQuery({
-    queryKey: ['workspaces'],
-    queryFn: () => {
-      return getWorkspaces({
-        cookie: headers().get('cookie') ?? '',
-      })
-    },
-  })
-
-  const workspace = workspaces?.find((o) => o.id === params.workspace)
-
-  if (!workspace) return notFound()
-
   return (
     <header className="sticky top-0 flex bg-white px-4 py-3 lg:items-center">
-      <SidebarToggle>
+      <SidebarMobile>
         <Sidebar dialog user={user} params={params} />
-      </SidebarToggle>
+      </SidebarMobile>
 
       <form method="get" className="relative w-full max-w-[14rem] md:max-w-xs">
         <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 text-foreground/50" />
@@ -63,9 +40,7 @@ const Header = async ({ user, params }: Props) => {
         </div>
       </form>
 
-      <HydrationBoundary state={dehydrate(queryClient)}>
-        <ProfileDropdown user={user} currentWorkspace={workspace} />
-      </HydrationBoundary>
+      <ProfileDropdown user={user} />
     </header>
   )
 }

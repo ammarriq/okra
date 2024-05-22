@@ -14,7 +14,6 @@ export const createFolder = async (id: string, workspace_id: string) => {
     id,
     name: null,
     icon: '',
-    workspace_id,
     updated_at: null,
     created_at: Date.now(),
     created_by: user.id,
@@ -26,7 +25,7 @@ export const createFolder = async (id: string, workspace_id: string) => {
       (id, workspace_id, created_by, created_at)
       VALUES(?, ?, ?, ?)`,
     )
-    .bind(folder.id, folder.workspace_id, folder.created_by, folder.created_at)
+    .bind(folder.id, folder.created_by, folder.created_at)
     .run()
 
   return folder

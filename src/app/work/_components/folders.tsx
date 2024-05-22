@@ -41,49 +41,59 @@ type Props = {
 const Folders = ({ userId }: Props) => {
   const queryClient = useQueryClient()
   const router = useRouter()
-  const params = useParams<{ workspace: string; folder?: string }>()
+  const params = useParams<{ folder?: string }>()
 
   const { data: folders } = useQuery({
-    queryKey: ['folders', params.workspace],
-    queryFn: () => {
-      return getFolders({
-        params: { workspace_id: params.workspace },
-      })
-    },
+    queryKey: ['folders'],
+    queryFn: () => getFolders(),
   })
 
   const createFolder = (): Folder => {
-    return {
+    const folder = {
       id: createId(15),
       name: '',
       icon: '',
-      workspace_id: params.workspace,
       updated_at: null,
       created_at: Date.now(),
       created_by: userId,
     }
+
+    document.cookie = serializeCookie(folder.id, JSON.stringify(folder), {
+      path: '/',
+      secure: true,
+    })
+
+    return folder
   }
 
-  const { mutate } = useMutation({
-    mutationKey: ['createFolder'],
+  const { mutate: addFolder } = useMutation({
     mutationFn: async () => {
       const folder = createFolder()
 
-      hc.workspaces.$post({
-        json: { id: folder.id, workspace_id: folder.workspace_id },
-      })
-
       queryClient.setQueryData(
-        ['folders', params.workspace],
+        ['folders'], //
         (old: Folder[]) => [folder, ...old],
       )
 
-      document.cookie = serializeCookie(folder.id, JSON.stringify(folder), {
-        path: '/',
-        secure: true,
-      })
+      router.push(`/work/${folder.id}`)
 
-      router.push(`/work/${params.workspace}/${folder.id}`)
+      const res = await hc.folders.$post({
+        json: { id: folder.id },
+      })
+      return await res.json()
+    },
+  })
+
+  const { mutate: delFolder } = useMutation({
+    mutationFn: (id: string) => {
+      queryClient.setQueryData(
+        ['folders'], //
+        (old: Folder[]) => old.filter((o) => o.id !== id),
+      )
+
+      if (params.folder === id) router.push(`/work/home`)
+
+      return deleteFolder(id)
     },
   })
 
@@ -91,45 +101,33 @@ const Folders = ({ userId }: Props) => {
     <nav className="flex h-full flex-col gap-1 overflow-auto pt-4">
       <hgroup className="mb-2 flex items-center px-5 text-foreground/50 lg:px-6">
         <h3 className="text-sm font-semibold">Pages</h3>
-        {/* <form action={() => mutate()} className="ml-auto">
-          <input type="hidden" name="id" value={createId(15)} />
-          <input type="hidden" name="workspace_id" value={params.workspace} /> */}
 
-        <button type="button" className="ml-auto" onClick={() => mutate()}>
+        <button type="button" className="ml-auto" onClick={() => addFolder()}>
           <PlusIcon />
         </button>
-        {/* </form> */}
       </hgroup>
 
       <ul className="overflow-auto px-3.5 lg:px-4">
         {folders?.map(({ id, name }) => (
           <Pathname
-            key={`/work/${params.workspace}/${id}`}
+            key={`/work/${id}`}
             className="group relative flex w-full items-center gap-2.5 rounded-lg
             border border-transparent p-1.5 text-foreground/50 hover:border-border
             hover:bg-white hover:text-foreground lg:px-2.5 lg:py-2"
             activeClass="border-border bg-white text-foreground"
-            includes={`/work/${params.workspace}/${id}`}
+            includes={`/work/${id}`}
           >
             <FolderIcon className="size-5" />
 
             <Link
-              href={`/work/${params.workspace}/${id}`}
+              href={`/work/${id}`}
               className="w-0 grow truncate whitespace-nowrap text-sm
               font-medium capitalize after:absolute after:inset-0"
             >
               {name || 'Untitled'}
             </Link>
 
-            <FolderOptions
-              deleteAction={async () => {
-                if (params.folder === id) {
-                  router.push(`/work/${params.workspace}/home`)
-                }
-
-                deleteFolder(id)
-              }}
-            />
+            <FolderOptions deleteAction={() => delFolder(id)} />
           </Pathname>
         ))}
       </ul>
@@ -137,11 +135,7 @@ const Folders = ({ userId }: Props) => {
   )
 }
 
-const FolderOptions = ({
-  deleteAction,
-}: {
-  deleteAction: () => Promise<void>
-}) => {
+const FolderOptions = ({ deleteAction }: { deleteAction: () => void }) => {
   const [isDelete, setIsDelete] = useState(false)
 
   return (
@@ -211,13 +205,14 @@ const FolderOptions = ({
                 <div className="mt-6 space-y-2">
                   <Button
                     className="w-full rounded border border-danger bg-danger/10 px-4 py-1.5 text-sm text-danger"
-                    onPress={() => deleteAction().then(close)}
+                    onPress={deleteAction}
+                    onPressEnd={close}
                   >
                     Yes, Delete this page
                   </Button>
                   <Button
                     className="w-full rounded border border-border px-4 py-1.5 text-sm text-foreground"
-                    onPress={close}
+                    onPressEnd={close}
                   >
                     Cancel
                   </Button>

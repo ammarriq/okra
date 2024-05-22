@@ -5,8 +5,6 @@ import { validateRequest } from '@/lib/auth'
 import { GoogleIcon } from '@/lib/icons'
 import { getEnv } from '@/lib/server/cf'
 
-import { workspaceUrl } from './workspace-url'
-
 export const runtime = 'edge'
 
 type Props = {
@@ -18,8 +16,7 @@ const Page = async ({ searchParams }: Props) => {
   const { user } = await validateRequest(env.db)
 
   if (user) {
-    const url = await workspaceUrl(user.id)
-    return redirect(url)
+    return redirect('/work/home')
   }
 
   return (

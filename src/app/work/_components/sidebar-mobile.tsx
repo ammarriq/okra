@@ -8,7 +8,7 @@ type Props = {
   children: React.ReactNode
 }
 
-const SidebarToggle = ({ children }: Props) => {
+const SidebarMobile = ({ children }: Props) => {
   return (
     <DialogTrigger>
       <Button className="mr-4 flex items-center rounded-md bg-background p-1 lg:hidden">
@@ -35,4 +35,4 @@ const SidebarToggle = ({ children }: Props) => {
   )
 }
 
-export default SidebarToggle
+export default SidebarMobile

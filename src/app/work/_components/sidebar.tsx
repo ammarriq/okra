@@ -58,13 +58,8 @@ type Props = {
 const Sidebar = async ({ dialog, user, params }: Props) => {
   const queryClient = new QueryClient()
   await queryClient.prefetchQuery({
-    queryKey: ['folders', params.workspace],
-    queryFn: () => {
-      return getFolders({
-        cookie: headers().get('cookie') ?? '',
-        params: { workspace_id: params.workspace },
-      })
-    },
+    queryKey: ['folders'],
+    queryFn: () => getFolders({ cookie: headers().get('cookie') ?? '' }),
   })
 
   return (
@@ -94,7 +89,7 @@ const Sidebar = async ({ dialog, user, params }: Props) => {
             <Icon className="size-5" />
 
             <Link
-              href={`/work/${params.workspace}/${url}`}
+              href={`/work/${url}`}
               className="w-0 grow truncate whitespace-nowrap text-sm
               font-medium capitalize after:absolute after:inset-0"
             >
