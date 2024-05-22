@@ -1,10 +1,14 @@
+import { headers } from 'next/headers'
 import { notFound } from 'next/navigation'
 
-import { QueryClient } from '@tanstack/react-query'
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query'
 import { User } from 'lucia'
 
 import { CommandIcon, SearchIcon } from '@/lib/icons'
-import { getSessionCookie } from '@/lib/server/cookie'
 import { getWorkspaces } from '@/app-server/queries/workspaces'
 
 import ProfileDropdown from './profile-dropdown'
@@ -22,14 +26,14 @@ const Header = async ({ user, params }: Props) => {
     queryKey: ['workspaces'],
     queryFn: () => {
       return getWorkspaces({
-        cookie: getSessionCookie(),
+        cookie: headers().get('cookie') ?? '',
       })
     },
   })
 
   const workspace = workspaces?.find((o) => o.id === params.workspace)
 
-  if (!workspaces || !workspace) return notFound()
+  if (!workspace) return notFound()
 
   return (
     <header className="sticky top-0 flex bg-white px-4 py-3 lg:items-center">
@@ -59,11 +63,9 @@ const Header = async ({ user, params }: Props) => {
         </div>
       </form>
 
-      <ProfileDropdown
-        user={user}
-        currentWorkspace={workspace}
-        workspaces={workspaces}
-      />
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <ProfileDropdown user={user} currentWorkspace={workspace} />
+      </HydrationBoundary>
     </header>
   )
 }

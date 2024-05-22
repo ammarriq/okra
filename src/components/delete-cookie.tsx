@@ -12,7 +12,8 @@ type Props = {
 const DeleteCookie = ({ name, children }: Props) => {
   useEffect(() => {
     deleteCookie(name)
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return <>{children}</>
 }

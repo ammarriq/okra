@@ -4,6 +4,8 @@ import type { Metadata } from 'next'
 
 import { Inter } from 'next/font/google'
 
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+
 import Providers from './providers'
 
 export const runtime = 'edge'
@@ -19,7 +21,10 @@ const Layout = ({ children }: Readonly<{ children: React.ReactNode }>) => {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+          <ReactQueryDevtools initialIsOpen={false} />
+        </Providers>
       </body>
     </html>
   )

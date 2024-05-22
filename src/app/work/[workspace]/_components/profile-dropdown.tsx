@@ -10,6 +10,7 @@ import {
 } from 'react-aria-components'
 import { Section } from 'react-aria-components'
 
+import { useQuery } from '@tanstack/react-query'
 import { User } from 'lucia'
 
 import {
@@ -22,17 +23,24 @@ import {
   PlusIcon,
 } from '@/lib/icons'
 import { Workspace } from '@/lib/schemas/workspace'
+import { getWorkspaces } from '@/app-server/queries/workspaces'
 import Avatar from '@/components/avatar'
 
 import { logout } from '../actions'
 
 type Props = {
   user: User
-  workspaces: Workspace[]
   currentWorkspace: Workspace
 }
 
-const ProfileDropdown = ({ user, workspaces, currentWorkspace }: Props) => {
+const ProfileDropdown = ({ user, currentWorkspace }: Props) => {
+  const { data: workspaces } = useQuery({
+    queryKey: ['workspaces'],
+    queryFn: () => {
+      return getWorkspaces()
+    },
+  })
+
   return (
     <MenuTrigger>
       <Button className="ml-auto flex overflow-hidden rounded-full border border-border">
@@ -55,7 +63,7 @@ const ProfileDropdown = ({ user, workspaces, currentWorkspace }: Props) => {
               Workspaces
             </Header>
 
-            {workspaces.map((o) => (
+            {workspaces?.map((o) => (
               <MenuItem
                 key={o.id}
                 href={`/work/${o.id}/home`}

@@ -1,7 +1,11 @@
+import { headers } from 'next/headers'
 import Link from 'next/link'
-import { notFound } from 'next/navigation'
 
-import { QueryClient } from '@tanstack/react-query'
+import {
+  dehydrate,
+  HydrationBoundary,
+  QueryClient,
+} from '@tanstack/react-query'
 import { User } from 'lucia'
 
 import {
@@ -11,9 +15,6 @@ import {
   HomeIcon,
   UsersGroupIcon,
 } from '@/lib/icons'
-import { Folder } from '@/lib/schemas/folder'
-import { getEnv } from '@/lib/server/cf'
-import { getSessionCookie } from '@/lib/server/cookie'
 import { cn } from '@/lib/utils/cn'
 import { getFolders } from '@/app-server/queries/folders'
 
@@ -56,17 +57,15 @@ type Props = {
 
 const Sidebar = async ({ dialog, user, params }: Props) => {
   const queryClient = new QueryClient()
-  const folders = await queryClient.fetchQuery({
+  await queryClient.prefetchQuery({
     queryKey: ['folders', params.workspace],
     queryFn: () => {
       return getFolders({
-        cookie: getSessionCookie(),
+        cookie: headers().get('cookie') ?? '',
         params: { workspace_id: params.workspace },
       })
     },
   })
-
-  if (!folders) return notFound()
 
   return (
     <aside
@@ -105,7 +104,9 @@ const Sidebar = async ({ dialog, user, params }: Props) => {
         ))}
       </nav>
 
-      <Folders folders={folders} userId={user.id} />
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <Folders userId={user.id} />
+      </HydrationBoundary>
     </aside>
   )
 }
