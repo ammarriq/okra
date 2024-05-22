@@ -34,15 +34,15 @@ const ProfileDropdown = ({ user }: Props) => {
 
       <Popover
         placement="top right"
-        className="origin-top-right rounded-lg border border-border
-        bg-white shadow fill-mode-forwards entering:animate-in entering:fade-in entering:zoom-in-95
-        exiting:animate-out exiting:fade-out exiting:zoom-out-95 sm:w-52"
+        className="origin-top-right rounded-lg border border-border bg-white shadow fill-mode-forwards entering:animate-in entering:fade-in entering:zoom-in-95 exiting:animate-out exiting:fade-out exiting:zoom-out-95 sm:w-48"
       >
         <Menu className="outline-none">
-          <Section className="flex flex-col pt-2 font-medium">
+          <Section className="flex flex-col truncate pt-2 font-medium">
             <Header className="border-b px-2.5 pb-2 text-sm font-semibold">
               <p className="text-sm font-medium text-foreground">{user.name}</p>
-              <p className="text-xs text-foreground/50">{user.email}</p>
+              <p className="truncate text-xs text-foreground/50">
+                {user.email}
+              </p>
             </Header>
 
             <MenuItem
