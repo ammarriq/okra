@@ -66,7 +66,7 @@ const Folders = ({ userId }: Props) => {
     return folder
   }
 
-  const { mutate: addFolder } = useMutation({
+  const { mutateAsync: addFolder } = useMutation({
     mutationFn: async () => {
       const folder = createFolder()
 
@@ -75,16 +75,21 @@ const Folders = ({ userId }: Props) => {
         (old: Folder[]) => [folder, ...old],
       )
 
-      router.push(`/work/${folder.id}`)
-
       const res = await hc.folders.$post({
         json: { id: folder.id },
       })
-      return await res.json()
+
+      const json = await res.json()
+
+      if (json.success) {
+        router.push(`/work/${folder.id}`)
+      }
+
+      return
     },
   })
 
-  const { mutate: delFolder } = useMutation({
+  const { mutateAsync: delFolder } = useMutation({
     mutationFn: (id: string) => {
       queryClient.setQueryData(
         ['folders'], //
