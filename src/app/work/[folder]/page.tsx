@@ -25,7 +25,7 @@ const Page = async ({ params }: Props) => {
   }
 
   const queryClient = new QueryClient()
-  const { data } = await queryClient.fetchQuery({
+  const { data: folder } = await queryClient.fetchQuery({
     queryKey: ['folders', params.folder],
     queryFn: () => {
       return getFolder({
@@ -35,8 +35,8 @@ const Page = async ({ params }: Props) => {
     },
   })
 
-  if (!data.folder) return notFound()
-  return <Folder folder={data.folder} />
+  if (!folder) return notFound()
+  return <Folder folder={folder} />
 }
 
 export default Page

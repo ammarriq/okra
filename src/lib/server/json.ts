@@ -5,11 +5,11 @@ import { StatusCode } from 'hono/utils/http-status'
 import { HonoContext } from '@/app-server/_app'
 
 export const json = (c: Context<HonoContext, '/', BlankInput>) => ({
-  success: <T extends { [key: string]: unknown }>(
+  success: <T extends unknown >(
     data: T,
     status?: StatusCode,
   ) => {
-    return c.json({ success: true, data: { ...data } }, status)
+    return c.json({ success: true, data }, status)
   },
 
   auth_error: async () => {
@@ -25,7 +25,7 @@ export const json = (c: Context<HonoContext, '/', BlankInput>) => ({
     )
   },
 
-  val_error: async <T extends { [key: string]: unknown }>(details: T) => {
+  val_error: async <T extends unknown>(details: T) => {
     return c.json(
       {
         success: false,

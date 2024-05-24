@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import {
   Button,
   Dialog,
@@ -15,24 +15,21 @@ import {
 import { Popover } from 'react-aria-components'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { serializeCookie } from 'oslo/cookie'
 
 import {
   DotsHorizontalIcon,
   ExternalLinkIcon,
   FolderIcon,
+  LibraryIcon,
   LinkIcon,
+  LoaderIcon,
   PlusIcon,
   TrashIcon,
 } from '@/lib/icons'
 import { Folder } from '@/lib/schemas/folder'
 import { createId } from '@/lib/utils/random'
-import { hc } from '@/app-server/hono'
-import { addFolder } from '@/app-server/mutations/folders'
+import { addFolder, deleteFolder } from '@/app-server/mutations/folders'
 import { getFolders } from '@/app-server/queries/folders'
-
-import { deleteFolder } from '../[folder]/actions'
-import { createFolder as server_createFolder } from '../[folder]/actions'
 
 import Pathname from './active-pathname'
 
@@ -50,27 +47,34 @@ const Folders = ({ userId }: Props) => {
     queryFn: () => getFolders(),
   })
 
-  const createFolder = (): Folder => {
-    const folder = {
-      id: createId(15),
-      name: '',
-      icon: '',
-      updated_at: null,
-      created_at: Date.now(),
-      created_by: userId,
-    }
+  // const createFolder = (): Folder => {
+  //   return {
+  //     id: createId(15),
+  //     name: '',
+  //     icon: '',
+  //     updated_at: null,
+  //     created_at: Date.now(),
+  //     created_by: userId,
+  //   }
 
-    document.cookie = serializeCookie(folder.id, JSON.stringify(folder), {
-      path: '/',
-      secure: true,
-    })
+  // document.cookie = serializeCookie(folder.id, JSON.stringify(folder), {
+  //   path: '/',
+  //   secure: true,
+  // })
 
-    return folder
-  }
+  // return folder
+  // }
 
-  const { mutateAsync: add_folder } = useMutation({
+  const addMutation = useMutation({
     mutationFn: async () => {
-      const folder = createFolder()
+      const folder: Folder = {
+        id: createId(15),
+        name: '',
+        icon: '',
+        updated_at: null,
+        created_at: Date.now(),
+        created_by: userId,
+      }
 
       queryClient.setQueryData(
         ['folders'], //
@@ -80,21 +84,30 @@ const Folders = ({ userId }: Props) => {
       return addFolder(folder.id)
     },
     onError: (err) => {
-      if (err.cause === 'AUTH_ERROR') router.push('/auth')
+      if (err.cause !== 'AUTH_ERROR') return
+      router.push('/auth')
     },
-    onSuccess: () => console.log('success'),
+    onSuccess: (data) => {
+      router.push(`/work/${data.id}`)
+    },
   })
 
-  const { mutateAsync: delFolder } = useMutation({
+  const deleteMutation = useMutation({
     mutationFn: (id: string) => {
       queryClient.setQueryData(
         ['folders'], //
         (old: Folder[]) => old.filter((o) => o.id !== id),
       )
 
-      if (params.folder === id) router.push(`/work/home`)
-
       return deleteFolder(id)
+    },
+    onError: (err) => {
+      if (err.cause !== 'AUTH_ERROR') return
+      router.push('/auth')
+    },
+    onSuccess: (data) => {
+      if (data.id !== params.folder) return
+      router.push(`/work/home`)
     },
   })
 
@@ -103,32 +116,25 @@ const Folders = ({ userId }: Props) => {
       <hgroup className="mb-2 flex items-center px-5 text-foreground/50 lg:px-6">
         <h3 className="text-sm font-semibold">Pages</h3>
 
-        <button type="button" className="ml-auto" onClick={() => add_folder()}>
-          <PlusIcon />
-        </button>
         <button
           type="button"
-          onClick={async () => {
-            const folder = createFolder()
-            queryClient.setQueryData(
-              ['folders'], //
-              (old: Folder[]) => [folder, ...old],
-            )
-
-            await server_createFolder(folder.id)
-          }}
+          className="ml-auto flex"
+          onClick={() => addMutation.mutateAsync()}
+          disabled={addMutation.isPending}
         >
-          <PlusIcon />
+          {addMutation.isPending ? (
+            <LoaderIcon className="animate-spin" />
+          ) : (
+            <PlusIcon />
+          )}
         </button>
       </hgroup>
 
-      <ul className="overflow-auto px-3.5 lg:px-4">
-        {folders?.map(({ id, name }) => (
+      <ul className="grid justify-items-center overflow-auto px-3.5 lg:px-4">
+        {(folders ?? []).map(({ id, name }) => (
           <Pathname
-            key={`/work/${id}`}
-            className="group relative flex w-full items-center gap-2.5 rounded-lg
-            border border-transparent p-1.5 text-foreground/50 hover:border-border
-            hover:bg-white hover:text-foreground lg:px-2.5 lg:py-2"
+            key={id}
+            className="group relative flex w-full items-center gap-2.5 rounded-lg border border-transparent p-1.5 text-foreground/50 hover:border-border hover:bg-white hover:text-foreground lg:px-2.5 lg:py-2"
             activeClass="border-border bg-white text-foreground"
             includes={`/work/${id}`}
           >
@@ -136,21 +142,43 @@ const Folders = ({ userId }: Props) => {
 
             <Link
               href={`/work/${id}`}
-              className="w-0 grow truncate whitespace-nowrap text-sm
-              font-medium capitalize after:absolute after:inset-0"
+              className="w-0 grow truncate whitespace-nowrap text-sm font-medium capitalize after:absolute after:inset-0"
             >
               {name || 'Untitled'}
             </Link>
 
-            <FolderOptions deleteAction={() => delFolder(id)} />
+            <FolderOptions
+              deleteAction={() => deleteMutation.mutateAsync(id)}
+            />
           </Pathname>
         ))}
+
+        {(folders ?? []).length ? null : (
+          <div className="flex w-full flex-col items-center justify-center gap-2 rounded-md border border-dashed p-4">
+            <div className="rounded-full bg-foreground/5 p-1.5">
+              <LibraryIcon className="size-5" />
+            </div>
+
+            <p className="text-xs text-foreground/50">No folder</p>
+
+            <button
+              className="rounded-md border bg-white px-4 py-1.5 text-xs font-semibold"
+              onClick={() => addMutation.mutateAsync()}
+            >
+              Add Folder
+            </button>
+          </div>
+        )}
       </ul>
     </nav>
   )
 }
 
-const FolderOptions = ({ deleteAction }: { deleteAction: () => void }) => {
+const FolderOptions = ({
+  deleteAction,
+}: {
+  deleteAction: () => Promise<unknown>
+}) => {
   const [isDelete, setIsDelete] = useState(false)
 
   return (
@@ -220,14 +248,13 @@ const FolderOptions = ({ deleteAction }: { deleteAction: () => void }) => {
                 <div className="mt-6 space-y-2">
                   <Button
                     className="w-full rounded border border-danger bg-danger/10 px-4 py-1.5 text-sm text-danger"
-                    onPress={deleteAction}
-                    onPressEnd={close}
+                    onPress={() => deleteAction().then(close)}
                   >
                     Yes, Delete this page
                   </Button>
                   <Button
                     className="w-full rounded border border-border px-4 py-1.5 text-sm text-foreground"
-                    onPressEnd={close}
+                    onPress={close}
                   >
                     Cancel
                   </Button>

@@ -5,12 +5,14 @@ export const getFolders = async (req: { cookie?: string } = {}) => {
     headers: { cookie: req.cookie ?? '' },
   })
 
-  const data = await res.json()
-  if (!data.success) {
-    throw new Error(data.error.message)
+  const result = await res.json()
+
+  if (!result.success) {
+    const { error } = result
+    throw new Error(error.message, { cause: error.code })
   }
 
-  return data.data.folders
+  return result.data
 }
 
 export const getFolder = async (req: {
@@ -22,10 +24,12 @@ export const getFolder = async (req: {
     { headers: { cookie: req.cookie ?? '' } },
   )
 
-  const data = await res.json()
-  if (!data.success) {
-    throw new Error(data.error.message)
+  const result = await res.json()
+
+  if (!result.success) {
+    const { error } = result
+    throw new Error(error.message, { cause: error.code })
   }
 
-  return data
+  return result
 }

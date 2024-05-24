@@ -57,7 +57,7 @@ type Props = {
 
 const Sidebar = async ({ dialog, user, params }: Props) => {
   const queryClient = new QueryClient()
-  await queryClient.prefetchQuery({
+  await queryClient.fetchQuery({
     queryKey: ['folders'],
     queryFn: () => getFolders({ cookie: headers().get('cookie') ?? '' }),
   })
@@ -71,7 +71,7 @@ const Sidebar = async ({ dialog, user, params }: Props) => {
       )}
     >
       <Link
-        href={`/work/${params.workspace}`}
+        href="/work/home"
         className="max-w-max px-3.5 text-xl lg:mx-0 lg:px-4 lg:text-xl"
       >
         <div className="{props.class} font-bold">okra</div>
@@ -81,8 +81,7 @@ const Sidebar = async ({ dialog, user, params }: Props) => {
         {menu.map(({ title, url, icon: Icon }) => (
           <Pathname
             key={url}
-            className="relative flex w-full items-center gap-2.5 rounded-lg
-            border border-transparent p-1.5 text-foreground/50 lg:px-2.5 lg:py-2"
+            className="relative flex w-full items-center gap-2.5 rounded-lg border border-transparent p-1.5 text-foreground/50 lg:px-2.5 lg:py-2"
             activeClass="border-border bg-white text-foreground"
             includes={url}
           >

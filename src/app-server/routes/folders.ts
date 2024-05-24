@@ -27,7 +27,7 @@ export const foldersRouter = new Hono<HonoContext>()
         .all<Folder>()
         .then((o) => o.results)
 
-      return json(c).success({ folders })
+      return json(c).success(folders )
     } catch (error) {
       return json(c).server_error()
     }
@@ -49,7 +49,7 @@ export const foldersRouter = new Hono<HonoContext>()
         .bind(id, user.id)
         .first<Folder>()
 
-      return json(c).success({ folder })
+      return json(c).success( folder )
     } catch (error) {
       return json(c).server_error()
     }
@@ -92,10 +92,30 @@ export const foldersRouter = new Hono<HonoContext>()
         .run()
 
       deleteCookie(c, output.id)
-      return json(c).success({ folder })
+      return json(c).success( folder , 201)
     } catch (error) {
-      console.log('running this server error')
+      return json(c).server_error()
+    }
+  })
+  .delete('/:id', async (c) => {
+    const db = process.env.DB
+    const user = c.get('user')
 
+    if (!user) {
+      return json(c).auth_error()
+    }
+
+    const id = c.req.param('id')
+    if (!id) throw Error('No Id found.')
+
+    try {
+      await db
+        .prepare(`DELETE FROM folders WHERE id=? AND created_by=?`)
+        .bind(id, user.id)
+        .run()
+
+      return json(c).success({ id })
+    } catch (error) {
       return json(c).server_error()
     }
   })
