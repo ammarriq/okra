@@ -28,6 +28,7 @@ import {
 import { Folder } from '@/lib/schemas/folder'
 import { createId } from '@/lib/utils/random'
 import { hc } from '@/app-server/hono'
+import { addFolder } from '@/app-server/mutations/folders'
 import { getFolders } from '@/app-server/queries/folders'
 
 import { deleteFolder } from '../[folder]/actions'
@@ -67,7 +68,7 @@ const Folders = ({ userId }: Props) => {
     return folder
   }
 
-  const { mutateAsync: addFolder } = useMutation({
+  const { mutateAsync: add_folder } = useMutation({
     mutationFn: async () => {
       const folder = createFolder()
 
@@ -76,18 +77,12 @@ const Folders = ({ userId }: Props) => {
         (old: Folder[]) => [folder, ...old],
       )
 
-      const res = await hc.folders.$post({
-        json: { id: folder.id },
-      })
-
-      const json = await res.json()
-
-      if (json.success) {
-        router.push(`/work/${folder.id}`)
-      }
-
-      return
+      return addFolder(folder.id)
     },
+    onError: (err) => {
+      if (err.cause === 'AUTH_ERROR') router.push('/auth')
+    },
+    onSuccess: () => console.log('success'),
   })
 
   const { mutateAsync: delFolder } = useMutation({
@@ -108,7 +103,7 @@ const Folders = ({ userId }: Props) => {
       <hgroup className="mb-2 flex items-center px-5 text-foreground/50 lg:px-6">
         <h3 className="text-sm font-semibold">Pages</h3>
 
-        <button type="button" className="ml-auto" onClick={() => addFolder()}>
+        <button type="button" className="ml-auto" onClick={() => add_folder()}>
           <PlusIcon />
         </button>
         <button
