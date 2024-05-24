@@ -1,10 +1,12 @@
 'use server'
 
+import { redirect } from 'next/navigation'
+
 import { getUser, redirectToLogin } from '@/lib/auth'
 import { Folder } from '@/lib/schemas/folder'
 import { getEnv } from '@/lib/server/cf'
 
-export const createFolder = async (id: string, workspace_id: string) => {
+export const createFolder = async (id: string) => {
   const env = getEnv()
 
   const user = await getUser()
@@ -22,13 +24,13 @@ export const createFolder = async (id: string, workspace_id: string) => {
   await env.db
     .prepare(
       `INSERT INTO folders
-      (id, workspace_id, created_by, created_at)
-      VALUES(?, ?, ?, ?)`,
+      (id, created_by, created_at)
+      VALUES(?, ?, ?)`,
     )
     .bind(folder.id, folder.created_by, folder.created_at)
     .run()
 
-  return folder
+  return redirect(`/work/${folder.id}`)
 }
 
 export const deleteFolder = async (id: string) => {

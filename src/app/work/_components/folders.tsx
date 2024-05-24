@@ -31,6 +31,7 @@ import { hc } from '@/app-server/hono'
 import { getFolders } from '@/app-server/queries/folders'
 
 import { deleteFolder } from '../[folder]/actions'
+import { createFolder as server_createFolder } from '../[folder]/actions'
 
 import Pathname from './active-pathname'
 
@@ -108,6 +109,20 @@ const Folders = ({ userId }: Props) => {
         <h3 className="text-sm font-semibold">Pages</h3>
 
         <button type="button" className="ml-auto" onClick={() => addFolder()}>
+          <PlusIcon />
+        </button>
+        <button
+          type="button"
+          onClick={async () => {
+            const folder = createFolder()
+            queryClient.setQueryData(
+              ['folders'], //
+              (old: Folder[]) => [folder, ...old],
+            )
+
+            await server_createFolder(folder.id)
+          }}
+        >
           <PlusIcon />
         </button>
       </hgroup>
