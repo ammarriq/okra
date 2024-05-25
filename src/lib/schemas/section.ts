@@ -4,18 +4,34 @@ import {
   nullable,
   number,
   object,
-  type Output,
   string,
+  pipe,
+  InferInput,
 } from 'valibot'
 
 export const SectionSchema = object({
-  id: string([length(15, 'Id is required')]),
-  name: string([minLength(1, 'Name is required')]),
-  rank: string([minLength(1, 'Rank is required')]),
-  folder_id: string([length(15, 'Folder is required')]),
-  created_by: string([length(15, 'User is required')]),
+  id: pipe(
+    string(), //
+    length(15, 'Id is required'),
+  ),
+  name: pipe(
+    string(), //
+    minLength(1, 'Name is required'),
+  ),
+  rank: pipe(
+    string(), //
+    minLength(1, 'Rank is required'),
+  ),
+  folder_id: pipe(
+    string(), //
+    length(15, 'Folder is required'),
+  ),
+  created_by: pipe(
+    string(), //
+    length(15, 'User is required'),
+  ),
   updated_at: nullable(number()),
   created_at: number(),
 })
 
-export type Section = Output<typeof SectionSchema>
+export type Section = InferInput<typeof SectionSchema>

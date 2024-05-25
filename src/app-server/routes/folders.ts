@@ -27,7 +27,7 @@ export const foldersRouter = new Hono<HonoContext>()
         .all<Folder>()
         .then((o) => o.results)
 
-      return json(c).success(folders )
+      return json(c).success(folders)
     } catch (error) {
       return json(c).server_error()
     }
@@ -49,7 +49,7 @@ export const foldersRouter = new Hono<HonoContext>()
         .bind(id, user.id)
         .first<Folder>()
 
-      return json(c).success( folder )
+      return json(c).success(folder)
     } catch (error) {
       return json(c).server_error()
     }
@@ -92,7 +92,7 @@ export const foldersRouter = new Hono<HonoContext>()
         .run()
 
       deleteCookie(c, output.id)
-      return json(c).success( folder , 201)
+      return json(c).success(folder, 201)
     } catch (error) {
       return json(c).server_error()
     }
