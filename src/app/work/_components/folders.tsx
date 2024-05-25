@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import { Fragment, useState } from 'react'
+import { useState } from 'react'
 import {
   Button,
   Dialog,
@@ -46,24 +46,6 @@ const Folders = ({ userId }: Props) => {
     queryKey: ['folders'],
     queryFn: () => getFolders(),
   })
-
-  // const createFolder = (): Folder => {
-  //   return {
-  //     id: createId(15),
-  //     name: '',
-  //     icon: '',
-  //     updated_at: null,
-  //     created_at: Date.now(),
-  //     created_by: userId,
-  //   }
-
-  // document.cookie = serializeCookie(folder.id, JSON.stringify(folder), {
-  //   path: '/',
-  //   secure: true,
-  // })
-
-  // return folder
-  // }
 
   const addMutation = useMutation({
     mutationFn: async () => {
