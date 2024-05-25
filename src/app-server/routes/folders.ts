@@ -1,11 +1,11 @@
 import { Hono } from 'hono'
 import { deleteCookie } from 'hono/cookie'
-import { flatten, pick, safeParse } from 'valibot'
 
 import { Folder, FolderSchema } from '@/lib/schemas/folder'
 import { json } from '@/lib/server/json'
 
 import { HonoContext } from '../_app'
+import * as z from 'zod'
 
 export const foldersRouter = new Hono<HonoContext>()
   .get('/', async (c) => {
@@ -63,15 +63,15 @@ export const foldersRouter = new Hono<HonoContext>()
     }
 
     const data = await c.req.json()
-    const schema = pick(FolderSchema, ['id'])
-    const result = safeParse(schema, data)
+    const schema = FolderSchema.pick({ id: true })
+    const result = schema.safeParse(data)
 
     if (!result.success) {
-      const errors = flatten<typeof schema>(result.issues).nested
+      const errors = result.error.flatten().fieldErrors
       return json(c).val_error({ ...errors })
     }
 
-    const { output } = result
+    const { data: output } = result
     const folder: Folder = {
       ...output,
       name: '',

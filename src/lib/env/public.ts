@@ -1,9 +1,9 @@
-import { object, parse, string } from 'valibot'
+import * as z from 'zod'
 
-const ENVSchema = object({
-  NEXT_PUBLIC_BASE_API: string(),
+const EnvSchema = z.object({
+  NEXT_PUBLIC_BASE_API: z.string(),
 })
 
-export const env = parse(ENVSchema, {
+export const env = EnvSchema.parse({
   NEXT_PUBLIC_BASE_API: process.env.NEXT_PUBLIC_BASE_API,
 })

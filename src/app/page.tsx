@@ -1,7 +1,5 @@
 import Link from 'next/link'
 
-// import { env } from '@/lib/env'
-
 export const runtime = 'edge'
 
 const Page = async () => {

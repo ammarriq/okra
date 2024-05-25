@@ -1,27 +1,10 @@
-import {
-  InferInput,
-  email,
-  length,
-  number,
-  object,
-  pipe,
-  string,
-} from 'valibot'
+import * as z from 'zod'
 
-export const InviteSchema = object({
-  id: pipe(
-    string(), //
-    length(15, 'Id is required'),
-  ),
-  folder_id: pipe(
-    string(), //
-    length(15, 'Folder is required'),
-  ),
-  email: pipe(
-    string(), //
-    email('Email is required'),
-  ),
-  created_at: number(),
+export const InviteSchema = z.object({
+  id: z.string().length(15, 'Id is required'),
+  folder_id: z.string().length(15, 'Folder is required'),
+  email: z.string().email('Email is required'),
+  created_at: z.number(),
 })
 
-export type Invite = InferInput<typeof InviteSchema>
+export type Invite = z.output<typeof InviteSchema>

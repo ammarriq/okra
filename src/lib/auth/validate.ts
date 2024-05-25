@@ -5,7 +5,6 @@ import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { cache } from 'react'
 
-import { getRequestContext } from '@cloudflare/next-on-pages'
 import { Session, User } from 'lucia'
 
 import { getEnv } from '../server/cf'
